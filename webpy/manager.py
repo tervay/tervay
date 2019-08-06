@@ -3,17 +3,17 @@ import json
 from decimal import Decimal
 from typing import List
 
-from flask import render_template, get_flashed_messages, request, jsonify
+from flask import get_flashed_messages, jsonify, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.fields.html5 import IntegerField, DecimalField
+from wtforms.fields.html5 import DecimalField, IntegerField
 from wtforms.validators import DataRequired
 
 all_items = []  # type: List[FunctionDescriptor]
 
 type_to_field = {
-    int: IntegerField,
-    str: StringField,
+    int:     IntegerField,
+    str:     StringField,
     Decimal: DecimalField
 }
 
@@ -28,14 +28,16 @@ class FunctionDescriptor:
 
     def generate_flask_form(self):
         form_cls = type(f'{self.fn.__name__}Form', (FlaskForm,), {
-            **{p.name: type_to_field.get(p.annotation, StringField)(p.name, validators=[DataRequired()])
-               for p in self.signature.parameters.values()},
+            **{p.name: type_to_field.get(p.annotation, StringField)(
+                p.name, validators=[DataRequired()])
+                for p in self.signature.parameters.values()},
             **{'submit': SubmitField('Submit')}
         })
         return form_cls
 
     def create_flask_route_function(self):
-        """Create anonymous inner function in order to avoid namespace clashing"""
+        """Create anonymous inner function in order to avoid namespace
+        clashing"""
 
         def temporary():
             """
@@ -43,16 +45,13 @@ class FunctionDescriptor:
             """
             form_class = self.generate_flask_form()
             form = form_class()
-            fields = []
-            for arg_name, form_field in vars(form).items():
-                if arg_name in [p.name for p in self.signature.parameters.values()] or arg_name == 'submit':
-                    fields.append((arg_name, form_field))
+            fields = [(a, getattr(form, a)) for a in self.get_arg_names()]
             return render_template('py_function.html', **{
-                'item': self,
-                'form': form,
-                'form_fields': fields,
-                'form_vars': vars(form),
-                'msgs': get_flashed_messages(),
+                'item':         self,
+                'form':         form,
+                'form_fields':  fields,
+                'form_vars':    vars(form),
+                'msgs':         get_flashed_messages(),
                 'api_endpoint': f'/share/{self.url}_json/'
             })
 
@@ -68,7 +67,7 @@ class FunctionDescriptor:
                         casted = self.get_type_for_attr(arg_name)(value)
                         fn_args.append(casted)
 
-                    return jsonify({'result': self.fn(*fn_args)})
+                    return jsonify({'result': str(self.fn(*fn_args))})
                 except Exception as e:
                     return jsonify({'error': str(e)})
 
@@ -83,7 +82,7 @@ class FunctionDescriptor:
         for arg_name, form_field in vars(form).items():
             if arg_name in [p.name for p in self.signature.parameters.values()]:
                 fn_args.append(arg_name)
-        return fn_args
+        return fn_args + ['submit']
 
     def get_type_for_attr(self, attr: str):
         return self.signature.parameters[attr].annotation

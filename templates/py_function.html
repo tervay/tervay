@@ -40,6 +40,8 @@
                 return r.json();
             }).then((d) => {
                 document.getElementById('result').innerText = d['result'];
+            }).catch((e) => {
+                document.getElementById('result').innerText = `Error: ${e["error"]}`;
             });
             return false;
         });
