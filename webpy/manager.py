@@ -1,13 +1,13 @@
 import inspect
+import json
 from decimal import Decimal
 from typing import List
 
-from flask import flash, redirect, render_template, get_flashed_messages, request, jsonify
+from flask import render_template, get_flashed_messages, request, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.fields.html5 import IntegerField, DecimalField
 from wtforms.validators import DataRequired
-import json
 
 all_items = []  # type: List[FunctionDescriptor]
 
