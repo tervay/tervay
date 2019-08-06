@@ -45,7 +45,8 @@ class FunctionDescriptor:
             """
             form_class = self.generate_flask_form()
             form = form_class()
-            fields = [(a, getattr(form, a)) for a in self.get_arg_names()]
+            fields = [(a, getattr(form, a)) for a in self.get_arg_names()] + \
+                     [('submit', form.submit)]
             return render_template('py_function.html', **{
                 'item':         self,
                 'form':         form,
@@ -66,9 +67,9 @@ class FunctionDescriptor:
                         value = json.loads(request.data)[arg_name]
                         casted = self.get_type_for_attr(arg_name)(value)
                         fn_args.append(casted)
-
                     return jsonify({'result': str(self.fn(*fn_args))})
                 except Exception as e:
+                    print(e)
                     return jsonify({'error': str(e)})
 
             return jsonify({'error': 'must be a POST request'})
@@ -82,7 +83,7 @@ class FunctionDescriptor:
         for arg_name, form_field in vars(form).items():
             if arg_name in [p.name for p in self.signature.parameters.values()]:
                 fn_args.append(arg_name)
-        return fn_args + ['submit']
+        return fn_args
 
     def get_type_for_attr(self, attr: str):
         return self.signature.parameters[attr].annotation
