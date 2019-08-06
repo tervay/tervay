@@ -7,3 +7,5 @@ heroku config:get DB_HOST -s >> .env
 heroku config:get DB_DATABASE -s >> .env
 heroku config:get DB_USER -s >> .env
 heroku config:get DB_PASSWORD -s >> .env
+echo "PYTHONUNBUFFERED=1" >> .env
+echo "FLASK_ENV=development" >> .env
