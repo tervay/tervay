@@ -11,7 +11,7 @@ from models.database import Hotlink
 from models.forms import HotlinkForm
 
 
-@app.route('/linker', methods=['GET', 'POST'])
+@app.route('/linker/', methods=['GET', 'POST'])
 @db_session
 def linker():
     form = HotlinkForm()
@@ -36,7 +36,7 @@ def linker():
     return render_template('hotlink_form.html', form=form)
 
 
-@app.route('/<path:shortlink>')
+@app.route('/<path:shortlink>/')
 @db_session
 def fallback(shortlink):
     query = Hotlink.select(lambda l: l.name == shortlink)

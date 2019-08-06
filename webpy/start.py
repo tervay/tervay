@@ -40,6 +40,5 @@ for item in all_items:
     # Ew
     vars()[f'route_for_{item.name}'] = create(item)
     vars()[f'route_for_{item.name}'].__name__ = f'route_for_{item.name}'
-    vars()[f'route_for_{item.name}'] = app.route(f'/share/{url}', methods=['GET', 'POST'])(
+    vars()[f'route_for_{item.name}'] = app.route(f'/share/{url}/', methods=['GET', 'POST'])(
         vars()[f'route_for_{item.name}'])
-    print(f'Bound {url} to {vars()[f"route_for_{item.name}"]}')
