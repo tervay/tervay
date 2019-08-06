@@ -5,6 +5,13 @@ from pony.orm import Database
 # noinspection PyUnresolvedReferences
 from app import app
 
+
+# Live template reloading
+@app.before_request
+def clear_cache():
+    app.jinja_env.cache = {}
+
+
 db = Database()
 db.bind(provider='postgres',
         host=os.environ.get('DB_HOST'),

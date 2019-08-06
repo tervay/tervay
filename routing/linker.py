@@ -11,6 +11,11 @@ from models.database import Hotlink
 from models.forms import HotlinkForm
 
 
+@app.route('/')
+def home():
+    return render_template('homepage.html')
+
+
 @app.route('/linker/', methods=['GET', 'POST'])
 @db_session
 def linker():
