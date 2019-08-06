@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ item.name }}</title>
+</head>
+<body>
+
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {% for arg_name, field in form_fields %}
+    <p>
+        {{ field.label }}<br>
+        {{ field(size=32) }}
+    </p>
+    {% endfor %}
+</form>
+{{ msgs }}
+</body>
+</html>

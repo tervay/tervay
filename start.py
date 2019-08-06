@@ -19,3 +19,6 @@ import models
 import routing
 
 db.generate_mapping(create_tables=False)
+
+# noinspection PyUnresolvedReferences
+import webpy.start
