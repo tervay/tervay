@@ -2,11 +2,12 @@ import inspect
 from decimal import Decimal
 from typing import List
 
-from flask import flash, redirect, render_template, get_flashed_messages
+from flask import flash, redirect, render_template, get_flashed_messages, request, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.fields.html5 import IntegerField, DecimalField
 from wtforms.validators import DataRequired
+import json
 
 all_items = []  # type: List[FunctionDescriptor]
 
@@ -42,15 +43,6 @@ class FunctionDescriptor:
             """
             form_class = self.generate_flask_form()
             form = form_class()
-            if form.validate_on_submit():
-                fn_args = []
-                for arg_name, form_field in vars(form).items():
-                    if arg_name in [p.name for p in self.signature.parameters.values()]:
-                        fn_args.append(form_field.data)
-
-                flash(self.fn(*fn_args))
-                return redirect(f'/share/{self.url}')
-
             fields = []
             for arg_name, form_field in vars(form).items():
                 if arg_name in [p.name for p in self.signature.parameters.values()] or arg_name == 'submit':
@@ -60,10 +52,41 @@ class FunctionDescriptor:
                 'form': form,
                 'form_fields': fields,
                 'form_vars': vars(form),
-                'msgs': get_flashed_messages()
+                'msgs': get_flashed_messages(),
+                'api_endpoint': f'/share/{self.url}_json/'
             })
 
         return temporary
+
+    def create_flask_json_endpoint(self):
+        def temporary():
+            if request.method == 'POST':
+                try:
+                    fn_args = []
+                    for arg_name in self.get_arg_names():
+                        value = json.loads(request.data)[arg_name]
+                        casted = self.get_type_for_attr(arg_name)(value)
+                        fn_args.append(casted)
+
+                    return jsonify({'result': self.fn(*fn_args)})
+                except Exception as e:
+                    return jsonify({'error': str(e)})
+
+            return jsonify({'error': 'must be a POST request'})
+
+        return temporary
+
+    def get_arg_names(self):
+        form_class = self.generate_flask_form()
+        form = form_class()
+        fn_args = []
+        for arg_name, form_field in vars(form).items():
+            if arg_name in [p.name for p in self.signature.parameters.values()]:
+                fn_args.append(arg_name)
+        return fn_args
+
+    def get_type_for_attr(self, attr: str):
+        return self.signature.parameters[attr].annotation
 
 
 def expose(name, url):

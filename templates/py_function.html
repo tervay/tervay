@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<form action="" method="post" novalidate>
+<form action="" method="post" novalidate id="form">
     {{ form.hidden_tag() }}
     {% for arg_name, field in form_fields %}
     <p>
@@ -15,6 +15,35 @@
     </p>
     {% endfor %}
 </form>
-{{ msgs }}
+
+<div>
+    <p id="result"></p>
+</div>
+
+
+<script>
+    window.onload = () => {
+        document.getElementById('form').addEventListener('submit', (e) => {
+            document.getElementById('result').innerText = 'Loading...';
+            if (e.preventDefault) e.preventDefault();
+            const url = "{{ api_endpoint }}";
+            let body = {
+            {% for arg_name, field in form_fields %}
+                {{ arg_name }}:document.getElementById('{{ arg_name }}').value,
+            {% endfor %}
+            };
+
+            fetch(url, {
+                method: 'post',
+                body: JSON.stringify(body)
+            }).then((r) => {
+                return r.json();
+            }).then((d) => {
+                document.getElementById('result').innerText = d['result'];
+            });
+            return false;
+        });
+    };
+</script>
 </body>
 </html>
