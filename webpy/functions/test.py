@@ -1,13 +1,13 @@
-from decimal import Decimal
+import inspect
 
+from cache import cache_frame
 from webpy.manager import expose
-
-
-@expose(name='Foo', url='test')
-def foo(a: int, b: Decimal, c: str, team: int) -> Decimal:
-    return Decimal(3)
 
 
 @expose(name='Add two numbers', url='add')
 def add(a: int, b: int) -> int:
+    r = cache_frame(inspect.currentframe())
+    if r is not None:
+        return r
+
     return a + b
