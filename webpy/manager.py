@@ -1,10 +1,10 @@
 import inspect
 import json
 from decimal import Decimal
-from typing import List
 
 from flask import get_flashed_messages, jsonify, render_template, request
 from flask_wtf import FlaskForm
+from typing import List
 from wtforms import StringField, SubmitField
 from wtforms.fields.html5 import DecimalField, IntegerField
 from wtforms.validators import DataRequired
@@ -47,14 +47,16 @@ class FunctionDescriptor:
             form = form_class()
             fields = [(a, getattr(form, a)) for a in self.get_arg_names()] + \
                      [('submit', form.submit)]
-            return render_template('py_function.html', **{
+            context = {
                 'item':         self,
                 'form':         form,
                 'form_fields':  fields,
                 'form_vars':    vars(form),
                 'msgs':         get_flashed_messages(),
                 'api_endpoint': f'/share/{self.url}_json/'
-            })
+            }
+            # noinspection PyArgumentList
+            return render_template('py_function.html', **context)
 
         return temporary
 
