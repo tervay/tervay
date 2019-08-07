@@ -70,7 +70,13 @@ class FunctionDescriptor:
                         casted = self.get_type_for_attr(arg_name)(value)
                         fn_args.append(casted)
                     result, cache_hit = self.fn(*fn_args)
-                    return jsonify({'result': str(result), 'cached': cache_hit})
+                    return jsonify(
+                        {
+                            'result': json.dumps(result, indent=4,
+                                                 sort_keys=True),
+                            'cached': cache_hit
+                        }
+                    )
                 except Exception as e:
                     return jsonify({'error': str(e)})
 
