@@ -39,9 +39,13 @@
             }).then((r) => {
                 return r.json();
             }).then((d) => {
-                document.getElementById('result').innerText = `Result: ${d['result']} (cache hit: ${d['cached']})`;
+                if (!d.hasOwnProperty('error')) {
+                    document.getElementById('result').innerText = `Result: ${d['result']} (cache hit: ${d['cached']})`;
+                } else {
+                    document.getElementById('result').innerText = `Error: ${d["error"]}`;
+                }
             }).catch((e) => {
-                document.getElementById('result').innerText = `Error: ${e["error"]}`;
+                document.getElementById('result').innerText = `Error: ${e}`;
             });
             return false;
         });

@@ -70,10 +70,8 @@ class FunctionDescriptor:
                         casted = self.get_type_for_attr(arg_name)(value)
                         fn_args.append(casted)
                     result, cache_hit = self.fn(*fn_args)
-                    print({'result': result, 'cached': cache_hit})
                     return jsonify({'result': str(result), 'cached': cache_hit})
                 except Exception as e:
-                    print(e)
                     return jsonify({'error': str(e)})
 
             return jsonify({'error': 'must be a POST request'})
