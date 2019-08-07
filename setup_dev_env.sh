@@ -11,6 +11,7 @@ heroku config:get DB_PASSWORD -s >> .env
 heroku config:get MEMCACHEDCLOUD_PASSWORD -s >> .env
 heroku config:get MEMCACHEDCLOUD_SERVERS -s >> .env
 heroku config:get MEMCACHEDCLOUD_USERNAME -s >> .env
+heroku config:get REDIS_URL -s >> .env
 heroku config:get TBA_KEY -s >> .env
 echo "PYTHONUNBUFFERED=1" >> .env
 echo "FLASK_ENV=development" >> .env

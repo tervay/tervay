@@ -24,7 +24,10 @@ def most_awards_per_state(award_id: int, num_per_state: int):
     key_to_state = {e['key']: e['state_prov'] for e in events}
     print(f'Retrieving awards for {len(events)} events')
     event_awards = [call(tba.event_awards, event=e['key']) for e in events]
+    # event_awards = [tba.event_awards(e['key']) for e in events]
+    # event_awards = batch_call(events, tba.event_awards, lambda e: {'event': e['key']})
     win_counts = defaultdict(lambda: defaultdict(lambda: 0))
+    print('done', flush=True)
     for awards_list in event_awards:
         for award in awards_list:
             if award['award_type'] == award_id:
