@@ -5,7 +5,7 @@ import re
 import bmemcached
 import tbapy.models
 
-mem_cache = bmemcached.Client(
+mem_cache = bmemcached.DistributedClient(
     os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','),
     os.environ.get('MEMCACHEDCLOUD_USERNAME'),
     os.environ.get('MEMCACHEDCLOUD_PASSWORD'))
