@@ -8,6 +8,7 @@ from typing import List
 from wtforms import StringField, SubmitField
 from wtforms.fields.html5 import DecimalField, IntegerField
 from wtforms.validators import DataRequired
+import traceback
 
 all_items = []  # type: List[FunctionDescriptor]
 
@@ -78,7 +79,8 @@ class FunctionDescriptor:
                         }
                     )
                 except Exception as e:
-                    return jsonify({'error': str(e)})
+                    return jsonify(
+                        {'error': f'{str(e)}: {traceback.format_exc()}'})
 
             return jsonify({'error': 'must be a POST request'})
 
