@@ -30,7 +30,7 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
     _, _, parent_parent_fn_name, _, _ = inspect.getframeinfo(
         parent_parent_frame)
     if parent_parent_fn_name == cache_frame.__name__:
-        return
+        return None, None
 
     # Get the original function and what was passed to it in order to call it
     _, _, _, vals = inspect.getargvalues(frame)
@@ -46,9 +46,9 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
 
     # if theres a cache hit, return it
     if cached_result is not None:
-        return cached_result
+        return cached_result, True
 
     # if not, store it in the cache
     result = orig_fn(**vals)
     mem_cache.set(key=key, value=result, time=duration)
-    return result
+    return result, False

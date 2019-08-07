@@ -69,7 +69,9 @@ class FunctionDescriptor:
                         value = json.loads(request.data)[arg_name]
                         casted = self.get_type_for_attr(arg_name)(value)
                         fn_args.append(casted)
-                    return jsonify({'result': str(self.fn(*fn_args))})
+                    result, cache_hit = self.fn(*fn_args)
+                    print({'result': result, 'cached': cache_hit})
+                    return jsonify({'result': str(result), 'cached': cache_hit})
                 except Exception as e:
                     print(e)
                     return jsonify({'error': str(e)})

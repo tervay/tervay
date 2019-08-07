@@ -39,7 +39,7 @@
             }).then((r) => {
                 return r.json();
             }).then((d) => {
-                document.getElementById('result').innerText = d['result'];
+                document.getElementById('result').innerText = `Result: ${d['result']} (cache hit: ${d['cached']})`;
             }).catch((e) => {
                 document.getElementById('result').innerText = `Error: ${e["error"]}`;
             });
