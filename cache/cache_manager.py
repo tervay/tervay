@@ -1,8 +1,8 @@
-import os, inspect
+import inspect
+import os
+import re
 
 import bmemcached
-import re
-import sys
 
 mem_cache = bmemcached.Client(
     os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','),
