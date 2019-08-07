@@ -3,6 +3,7 @@ import os
 import re
 
 import bmemcached
+import tbapy.models
 
 mem_cache = bmemcached.Client(
     os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','),
@@ -15,6 +16,7 @@ day = hour * 24
 week = day * 7
 
 DEFAULT_CACHE_TIME = day * 2
+DEFAULT_TBA_CACHE_TIME = day * 14
 
 
 # https://github.com/django/django/blob/master/django/utils/text.py#L219
@@ -52,3 +54,21 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
     result = orig_fn(**vals)
     mem_cache.set(key=key, value=result, time=duration)
     return result, False
+
+
+def call(fn, refresh=False, *args, **kwargs):
+    fn_str = get_valid_filename(fn.__name__)
+    args_str = get_valid_filename(str(args))
+    kwargs_str = get_valid_filename(str(kwargs))
+    key = f'{fn_str}({args_str}_{kwargs_str})'
+    cached_result = mem_cache.get(key)
+    if cached_result is not None and not refresh:
+        return cached_result
+
+    # noinspection PyArgumentList
+    result = fn(*args, **kwargs)
+    if isinstance(result, tbapy.models._base_model_class):
+        result = dict(result)
+
+    mem_cache.set(key=key, value=result, time=DEFAULT_TBA_CACHE_TIME)
+    return result

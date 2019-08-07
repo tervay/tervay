@@ -1,1 +1,1 @@
-from cache.cache_manager import cache_frame
+from cache.cache_manager import cache_frame, call
