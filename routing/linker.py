@@ -27,14 +27,14 @@ def linker():
         debug = app.config['SECRET_KEY'] == 'testing-string'
         if debug:
             Hotlink(name=name, url=url)
-            return redirect('/')
+            return redirect('/linker')
 
         salt = os.environ.get('SALT')
         digest = os.environ.get('AUTH')
         hashed = hashlib.sha512((pw + salt).encode()).hexdigest()
         if hashed == digest:
             Hotlink(name=name, url=url)
-            return redirect('/')
+            return redirect('/linker')
         else:
             abort(403)
 
