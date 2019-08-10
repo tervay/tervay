@@ -4,6 +4,8 @@ import re
 
 import tbapy.models
 import redis as redis_package
+from redis.client import Pipeline
+
 import json
 import zlib
 
@@ -18,19 +20,32 @@ DEFAULT_CACHE_TIME = day * 2
 DEFAULT_TBA_CACHE_TIME = day * 14
 
 
-def store(key, value):
-    byte_obj = json.dumps(value).encode()
-    compressed = zlib.compress(byte_obj)
-    redis.set(key, compressed)
+def preprocess(x):
+    return zlib.compress(json.dumps(x).encode())
 
 
-def retrieve(key):
-    cached_result = redis.get(key)
-    if cached_result is not None:
-        decompressed = zlib.decompress(cached_result)
-        cached_result = json.loads(decompressed)
+def postprocess(x):
+    return json.loads(zlib.decompress(x))
 
-    return cached_result
+
+def store(key, value, pipe=None):
+    compressed = preprocess(value)
+    if pipe is None:
+        redis.set(key, compressed)
+    else:
+        pipe.set(key, compressed)
+
+
+def retrieve(key, pipe=None):
+    if pipe is None:
+        cached_result = redis.get(key)
+        if cached_result is not None:
+            cached_result = postprocess(cached_result)
+
+        return cached_result
+    else:
+        cached_result = pipe.get(key)
+        return cached_result
 
 
 # https://github.com/django/django/blob/master/django/utils/text.py#L219
@@ -73,13 +88,13 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
     return result, False
 
 
-def call(fn, refresh=False, *args, **kwargs):
+def call(fn, refresh=False, pipe=None, *args, **kwargs):
     fn_str = get_valid_filename(fn.__name__)
     args_str = get_valid_filename(str(args))
     kwargs_str = get_valid_filename(str(kwargs))
     key = f'{fn_str}({args_str}_{kwargs_str})'
     # cached_result = redis.get(key)
-    cached_result = retrieve(key)
+    cached_result = retrieve(key, pipe=pipe)
     if cached_result is not None and not refresh:
         # cached_result = json.loads(zlib.decompress(cached_result))
         return cached_result
@@ -90,17 +105,47 @@ def call(fn, refresh=False, *args, **kwargs):
         result = dict(result)
 
     # redis.set(key, zlib.compress(json.dumps(result)))
-    store(key, result)
+    store(key, result, pipe=pipe)
     return result
 
 
-def batch_call(iterable, fn, get_kwargs):
-    keys = []
-    for x in iterable:
-        kwargs = get_kwargs(x)
-        args = []
-        fn_str = get_valid_filename(fn.__name__)
-        args_str = get_valid_filename(str(args))
-        kwargs_str = get_valid_filename(str(kwargs))
-        key = f'{fn_str}({args_str}_{kwargs_str})'
-        keys.append(key)
+def batch_call(iterable, fn, get_args, get_kwargs):
+    with redis.pipeline() as pipe:
+        print('Building first pipe call')
+        keys = []
+        for x in iterable:
+            args = get_args(x)
+            kwargs = get_kwargs(x)
+            fn_str = get_valid_filename(fn.__name__)
+            args_str = get_valid_filename(str(args))
+            kwargs_str = get_valid_filename(str(kwargs))
+            key = f'{fn_str}({args_str}_{kwargs_str})'
+            keys.append(key)
+
+        print('Retrieving based on first calls')
+        for key in keys:
+            retrieve(key, pipe=pipe)
+
+        print('Executing first pipe call')
+        res1 = pipe.execute()
+        results = {}
+        for key, res in zip(keys, res1):
+            if res is not None:
+                res = postprocess(res)
+            results[key] = res
+
+        print('Building second pipe call')
+        for x in iterable:
+            args = get_args(x)
+            kwargs = get_kwargs(x)
+            fn_str = get_valid_filename(fn.__name__)
+            args_str = get_valid_filename(str(args))
+            kwargs_str = get_valid_filename(str(kwargs))
+            key = f'{fn_str}({args_str}_{kwargs_str})'
+            if results[key] is None:
+                results[key] = call(fn, *args, **kwargs, pipe=pipe)
+
+        print('Executing second pipe call')
+        pipe.execute()
+
+        return list(results.values())

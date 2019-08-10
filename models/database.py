@@ -4,5 +4,5 @@ from start import db
 
 
 class Hotlink(db.Entity):
-    name = Required(str)
+    name = Required(str, unique=True)
     url = Required(str)

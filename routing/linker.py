@@ -1,7 +1,7 @@
 import hashlib
 import os
 
-from flask import render_template
+from flask import render_template, flash, get_flashed_messages
 from pony.orm import db_session
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
@@ -20,25 +20,38 @@ def home():
 @db_session
 def linker():
     form = HotlinkForm()
+    show = []
+    if 'show_hotlinks' in get_flashed_messages():
+        show = [(h.name, h.url) for h in Hotlink.select(lambda h: True)]
     if form.validate_on_submit():
         pw = form.password.data
         name = form.name.data
         url = form.url.data
         debug = app.config['SECRET_KEY'] == 'testing-string'
         if debug:
-            Hotlink(name=name, url=url)
+            if name == 'show':
+                print('flashing')
+                flash('show_hotlinks')
+            else:
+                print('create')
+                Hotlink(name=name, url=url)
             return redirect('/linker')
 
         salt = os.environ.get('SALT')
         digest = os.environ.get('AUTH')
         hashed = hashlib.sha512((pw + salt).encode()).hexdigest()
         if hashed == digest:
-            Hotlink(name=name, url=url)
+            if name == 'show':
+                print('flashing')
+                flash('show_hotlinks')
+            else:
+                print('create')
+                Hotlink(name=name, url=url)
             return redirect('/linker')
         else:
             abort(403)
 
-    return render_template('hotlink_form.html', form=form)
+    return render_template('hotlink_form.html', form=form, show=show)
 
 
 @app.route('/<path:shortlink>/')
