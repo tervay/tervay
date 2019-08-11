@@ -10,10 +10,10 @@ from webpy.manager import expose
 @expose(name='Which teams have the most of a specific award in a state?',
         url='team_awards_per_state')
 def most_awards_per_state(award_id: int, num_per_state: int):
+    # https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/award_type.py#L6
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
         return r, cache_hit
-    # https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/award_type.py#L6
 
     print(f'most_awards_per_state({award_id}, {num_per_state})')
     print('Retrieving events')
@@ -23,9 +23,6 @@ def most_awards_per_state(award_id: int, num_per_state: int):
     events = list(filter(lambda e: e['country'] in ['USA', 'Canada'], events))
     key_to_state = {e['key']: e['state_prov'] for e in events}
     print(f'Retrieving awards for {len(events)} events')
-    # event_awards = [call(tba.event_awards, event=e['key']) for e in events]
-    # event_awards = [tba.event_awards(e['key']) for e in events]
-    # event_awards = batch_call(events, tba.event_awards, lambda e: {'event': e['key']})
     event_awards = batch_call(
         events,
         tba.event_awards,
