@@ -44,12 +44,6 @@ def score_slff(team_number: int, event_key: str):
 
 def score_team_event(team_number, event_key, refresh=False, wk=7):
     event_blob = call(tba.event, event=event_key)
-    try:
-        if (wk <= 7 and event_blob['week'] is None) or event_blob['week'] >= wk:
-            return 0, 0, 0, 0, 0
-    except:
-        print(f'\tuhh weird error with {team_number} at {event_key}')
-        return 0, 0, 0, 0, 0
     team_key = f'frc{team_number}'
     if event_blob['week'] is not None:  # not champs
         award_pt_map = {
