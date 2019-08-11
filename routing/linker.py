@@ -17,4 +17,5 @@ def fallback(shortlink):
     if query is not None:
         return redirect(query['url'])
     else:
+        print('abort abort')
         abort(404)

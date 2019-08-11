@@ -14,5 +14,6 @@ heroku config:get MEMCACHEDCLOUD_USERNAME -s >> .env
 heroku config:get REDIS_URL -s >> .env
 heroku config:get TBA_KEY -s >> .env
 heroku config:get MONGODB_URI -s >> .env
+heroku config:get SENTRY_DSN -s >> .env
 echo "PYTHONUNBUFFERED=1" >> .env
 echo "FLASK_ENV=development" >> .env
