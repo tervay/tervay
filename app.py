@@ -35,3 +35,5 @@ def clear_cache():
 # Bring URLs into scope
 # noinspection PyUnresolvedReferences
 import routing
+# noinspection PyUnresolvedReferences
+import webpy
