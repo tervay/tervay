@@ -1,14 +1,16 @@
 import inspect
 import json
+import traceback
 from decimal import Decimal
 
 from flask import get_flashed_messages, jsonify, render_template, request
 from flask_wtf import FlaskForm
 from typing import List
-from wtforms import StringField, SubmitField
+from wtforms import BooleanField, StringField, SubmitField
 from wtforms.fields.html5 import DecimalField, IntegerField
 from wtforms.validators import DataRequired
-import traceback
+
+from cache import purge_frame_cache
 
 all_items = []  # type: List[FunctionDescriptor]
 
@@ -32,7 +34,10 @@ class FunctionDescriptor:
             **{p.name: type_to_field.get(p.annotation, StringField)(
                 p.name, validators=[DataRequired()])
                 for p in self.signature.parameters.values()},
-            **{'submit': SubmitField('Submit')}
+            **{
+                'submit':  SubmitField('Submit'),
+                'refresh': BooleanField('Refresh')
+            }
         })
         return form_cls
 
@@ -47,7 +52,7 @@ class FunctionDescriptor:
             form_class = self.generate_flask_form()
             form = form_class()
             fields = [(a, getattr(form, a)) for a in self.get_arg_names()] + \
-                     [('submit', form.submit)]
+                     [('submit', form.submit), ('refresh', form.refresh)]
             context = {
                 'item':         self,
                 'form':         form,
@@ -65,12 +70,18 @@ class FunctionDescriptor:
         def temporary():
             if request.method == 'POST':
                 try:
-                    fn_args = []
+                    fn_args = {}
+                    request_data = json.loads(request.data)
                     for arg_name in self.get_arg_names():
-                        value = json.loads(request.data)[arg_name]
+                        value = request_data[arg_name]
                         casted = self.get_type_for_attr(arg_name)(value)
-                        fn_args.append(casted)
-                    result, cache_hit = self.fn(*fn_args)
+                        fn_args[arg_name] = casted
+
+                    print(request_data)
+                    if request_data['refresh']:
+                        purge_frame_cache(self.fn, **fn_args)
+
+                    result, cache_hit = self.fn(**fn_args)
                     return jsonify(
                         {
                             'result': json.dumps(result, indent=4,

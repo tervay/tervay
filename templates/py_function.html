@@ -65,9 +65,10 @@
                 {{ arg_name }}:document.getElementById('{{ arg_name }}').value,
             {% endfor %}
             };
+            body['refresh'] = document.getElementById('refresh').checked;
 
             fetch(url, {
-                method: 'post',
+                method: 'post',.lower() == 'y'
                 body: JSON.stringify(body)
             }).then((r) => {
                 return r.json();

@@ -1,13 +1,11 @@
 import inspect
+import json
 import os
 import re
-
-import tbapy.models
-import redis as redis_package
-from redis.client import Pipeline
-
-import json
 import zlib
+
+import redis as redis_package
+import tbapy.models
 
 redis = redis_package.from_url(os.environ.get('REDIS_URL'))
 
@@ -78,7 +76,7 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
 
     # if theres a cache hit, return it
     if cached_result is not None:
-        # cached_result = json.loads(zlib.decompress(cached_result))
+        print(f'Returning cache for {key} ({cached_result})')
         return cached_result, True
 
     # if not, store it in the cache
@@ -86,6 +84,13 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
     # redis.set(key, zlib.compress(json.dumps(result)))
     store(key, result)
     return result, False
+
+
+def purge_frame_cache(fn, *args, **kwargs):
+    fn_name = get_valid_filename(fn.__name__)
+    filename_str = get_valid_filename(inspect.getsourcefile(fn))
+    vals_str = get_valid_filename(str(kwargs))
+    redis.delete(f'{filename_str}::{fn_name}({vals_str})')
 
 
 def call(fn, refresh=False, pipe=None, *args, **kwargs):

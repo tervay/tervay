@@ -1,1 +1,1 @@
-from cache.cache_manager import cache_frame, call, batch_call
+from cache.cache_manager import cache_frame, call, batch_call, purge_frame_cache
