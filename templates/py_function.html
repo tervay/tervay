@@ -68,7 +68,7 @@
             body['refresh'] = document.getElementById('refresh').checked;
 
             fetch(url, {
-                method: 'post',.lower() == 'y'
+                method: 'post',
                 body: JSON.stringify(body)
             }).then((r) => {
                 return r.json();
