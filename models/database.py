@@ -1,8 +1,7 @@
-from pony.orm import Required
+import os
 
-from start import db
+from pymongo import MongoClient
 
-
-class Hotlink(db.Entity):
-    name = Required(str, unique=True)
-    url = Required(str)
+client = MongoClient(os.environ.get('MONGODB_URI'))
+db = client[os.environ.get('MONGODB_URI').split('/')[-1]]
+hotlinks = db['hotlinks']
