@@ -23,4 +23,5 @@ class HotlinkForm(FlaskForm):
 
 class HotlinkView(ModelView):
     column_list = ('name', 'url')
+    can_delete = False
     form = HotlinkForm
