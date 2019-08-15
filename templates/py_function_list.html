@@ -1,0 +1,26 @@
+{% extends 'homepage.html' %}
+{% block content %}
+
+<div class="list-group">
+    {% for fd, args in data.items() %}
+    <a href="{{ fd.url }}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ fd.name }}</h5>
+            <!--            <small class="text-muted">3 days ago</small>-->
+        </div>
+        <p class="mb-1">
+            {% for arg_name, arg_type in args %}
+            <span class="badge badge-primary">{{ arg_name }} <span
+                    class="badge badge-light">{{ arg_type }}</span></span>
+            {% endfor %}
+        </p>
+        <!--        <small class="text-muted">-->
+        <!--            {% for arg_name, arg_type in args %}-->
+        <!--            <span class="badge badge-primary">{{ arg_name }} <span class="badge badge-light"></span></span>-->
+        <!--            {% endfor %}-->
+        <!--        </small>-->
+    </a>
+    {% endfor %}
+</div>
+
+{% endblock %}

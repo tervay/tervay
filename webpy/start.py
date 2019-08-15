@@ -1,9 +1,10 @@
 from app import app
 from webpy.manager import all_items
 
+print('foo')
+
 for item in all_items:
     url = str(item.url).strip('/')
-
     # Ew
     route_name = f'route_for_{item.name}'
     vars()[route_name] = item.create_flask_route_function()

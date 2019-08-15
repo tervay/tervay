@@ -11,12 +11,16 @@
           crossorigin="anonymous">
 </head>
 <body>
-<div class="jumbotron ">
-    <div class="container">
-        <h1 class="display-4">Justin Tervay</h1>
-        <p class="lead"><a href="https://github.com/tervay/tervay">Website Source</a></p>
-        <p class="lead"><a href="http://www.tervay.com/resume">Resume</a></p>
+<div class="container">
+    {% block content %}
+    <div class="jumbotron ">
+        <div class="container">
+            <h1 class="display-4">Justin Tervay</h1>
+            <p class="lead"><a href="https://github.com/tervay/tervay">Website Source</a></p>
+            <p class="lead"><a href="http://www.tervay.com/resume">Resume</a></p>
+        </div>
     </div>
+    {% endblock %}
 </div>
 
 
