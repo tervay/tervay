@@ -1,8 +1,6 @@
 from app import app
 from webpy.manager import all_items
 
-print('foo')
-
 for item in all_items:
     url = str(item.url).strip('/')
     # Ew

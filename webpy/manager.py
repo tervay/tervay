@@ -77,7 +77,6 @@ class FunctionDescriptor:
                         casted = self.get_type_for_attr(arg_name)(value)
                         fn_args[arg_name] = casted
 
-                    print(request_data)
                     if request_data['refresh']:
                         purge_frame_cache(self.fn, **fn_args)
 

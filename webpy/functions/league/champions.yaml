@@ -1,0 +1,281 @@
+champions:
+  Aatrox:
+      origin: Demon
+      class: Blademaster
+  Ahri:
+      origin: Wild
+      class: Sorcerer
+  Akali:
+      origin: Ninja
+      class: Assassin
+  Anivia:
+      origin: Glacial
+      class: Elementalist
+  Ashe:
+      origin: Glacial
+      class: Ranger
+  AurelionSol:
+      origin: Dragon
+      class: Sorcerer
+  Blitzcrank:
+      origin: Robot
+      class: Brawler
+  Brand:
+      origin: Demon
+      class: Elementalist
+  Braum:
+      origin: Glacial
+      class: Guardian
+  Camille:
+      origin: Hextech
+      class: Blademaster
+  Cho'gath:
+      origin: Void
+      class: Brawler
+  Darius:
+      origin: Imperial
+      class: Knight
+  Draven:
+      origin: Imperial
+      class: Blademaster
+  Elise:
+      origin: Demon
+      class: Shapeshifter
+  Evelynn:
+      origin: Demon
+      class: Assassin
+  Fiora:
+      origin: Noble
+      class: Blademaster
+  Gangplank:
+      origin: Pirate
+      class: Blademaster/Gunslinger
+  Garen:
+      origin: Noble
+      class: Knight
+  Gnar:
+      origin: Wild
+      class: Shapeshifter
+  Graves:
+      origin: Pirate
+      class: Gunslinger
+  Jayce:
+      origin: Hextech
+      class: Shapeshifter
+  Jinx:
+      origin: Hextech
+      class: Gunslinger
+  Karthus:
+      origin: Phantom
+      class: Sorcerer
+  Kassadin:
+      origin: Void
+      class: Sorcerer
+  Katarina:
+      origin: Imperial
+      class: Assassin
+  Kayle:
+      origin: Noble
+      class: Knight
+  Kennen:
+      origin: Ninja/Yordle
+      class: Elementalist
+  Kha'Zix:
+      origin: Void
+      class: Assassin
+  Kindred:
+      origin: Phantom
+      class: Ranger
+  Leona:
+      origin: Noble
+      class: Guardian
+  Lissandra:
+      origin: Glacial
+      class: Elementalist
+  Lucian:
+      origin: Noble
+      class: Gunslinger
+  Lulu:
+      origin: Yordle
+      class: Sorcerer
+  MissFortune:
+      origin: Pirate
+      class: Gunslinger
+  Mordekaiser:
+      origin: Phantom
+      class: Knight
+  Morgana:
+      origin: Demon
+      class: Sorcerer
+  Nidalee:
+      origin: Wild
+      class: Shapeshifter
+  Poppy:
+      origin: Yordle
+      class: Knight
+  Pyke:
+      origin: Pirate
+      class: Assassin
+  Rek'Sai:
+      origin: Void
+      class: Brawler
+  Rengar:
+      origin: Wild
+      class: Assassin
+  Sejuani:
+      origin: Glacial
+      class: Knight
+  Shen:
+      origin: Ninja
+      class: Blademaster
+  Shyvana:
+      origin: Dragon
+      class: Shapeshifter
+  Swain:
+      origin: Demon/Imperial
+      class: Shapeshifter
+  Tristana:
+      origin: Yordle
+      class: Gunslinger
+  Varus:
+      origin: Demon
+      class: Ranger
+  Vayne:
+      origin: Noble
+      class: Ranger
+  Veigar:
+      origin: Yordle
+      class: Sorcerer
+  Vi:
+      origin: Hextech
+      class: Brawler
+  Volibear:
+      origin: Glacial
+      class: Brawler
+  Warwick:
+      origin: Wild
+      class: Brawler
+  Yasuo:
+      origin: Exile
+      class: Blademaster
+  Zed:
+      origin: Ninja
+      class: Assassin
+synergies:
+  -
+    name: Demon
+    thresholds:
+      - 2
+      - 4
+      - 6
+  -
+    name: Dragon
+    thresholds:
+      - 2
+  -
+    name: Exile
+    thresholds:
+      - 1
+  -
+    name: Glacial
+    thresholds:
+      - 2
+      - 4
+      - 6
+  -
+    name: Hextech
+    thresholds:
+      - 2
+      - 4
+  -
+    name: Robot
+    thresholds:
+      - 1
+  -
+    name: Imperial
+    thresholds:
+      - 2
+      - 4
+  -
+    name: Noble
+    thresholds:
+      - 3
+      - 6
+  -
+    name: Ninja
+    thresholds:
+      - 1
+      - 4
+  -
+    name: Pirate
+    thresholds:
+      - 3
+  -
+    name: Phantom
+    thresholds:
+      - 2
+  -
+    name: Wild
+    thresholds:
+      - 2
+      - 4
+  -
+    name: Void
+    thresholds:
+      - 3
+  -
+    name: Yordle
+    thresholds:
+      - 3
+      - 6
+  -
+    name: Assassin
+    thresholds:
+      - 3
+      - 6
+  -
+    name: Blademaster
+    thresholds:
+      - 3
+      - 6
+  -
+    name: Brawler
+    thresholds:
+      - 2
+      - 4
+      - 6
+  -
+    name: Elementalist
+    thresholds:
+      - 3
+  -
+    name: Guardian
+    thresholds:
+      - 2
+  -
+    name: Gunslinger
+    thresholds:
+      - 2
+      - 4
+      - 6
+  -
+    name: Knight
+    thresholds:
+      - 2
+      - 4
+      - 6
+  -
+    name: Ranger
+    thresholds:
+      - 2
+      - 4
+  -
+    name: Shapeshifter
+    thresholds:
+      - 3
+      - 6
+  -
+    name: Sorcerer
+    thresholds:
+      - 3
+      - 6
