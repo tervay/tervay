@@ -62,7 +62,7 @@ class FunctionDescriptor:
                 'api_endpoint': f'/share/{self.url}_json/'
             }
             # noinspection PyArgumentList
-            return render_template('py_function.html', **context)
+            return render_template('py_function.html.jinja2', **context)
 
         return temporary
 

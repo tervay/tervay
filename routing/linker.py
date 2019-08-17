@@ -8,7 +8,7 @@ from models.database import hotlinks
 
 @app.route('/')
 def home():
-    return render_template('homepage.html')
+    return render_template('homepage.html.jinja2')
 
 
 @app.route('/<path:shortlink>/')
