@@ -10,6 +10,8 @@ from tbapy import TBA
 from models.database import db
 from models.forms import HotlinkView
 
+import logging
+
 tba = TBA(os.environ.get("TBA_KEY"))
 app = Flask(__name__, template_folder="templates")
 app.config["SECRET_KEY"] = os.environ.get("CSRF_KEY") or "testing-string"
@@ -23,6 +25,12 @@ admin.add_view(HotlinkView(db["hotlinks"]))
 
 # Sentry
 sentry_sdk.init(dsn=os.environ.get("SENTRY_DSN"), integrations=[FlaskIntegration()])
+
+# Logging
+logFormatter = "%(asctime)s [%(levelname)s] %(message)s"
+logging.basicConfig(format=logFormatter)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 # Live template reloading

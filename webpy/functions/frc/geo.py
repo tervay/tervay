@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import helpers
 from app import tba
-from cache import cache_frame, call, batch_call
+from cache import batch_call, cache_frame, call
 from webpy.manager import expose
 
 
@@ -17,19 +17,15 @@ def most_awards_per_state(award_id: int, num_per_state: int):
     if r is not None:
         return r, cache_hit
 
-    print(f"most_awards_per_state({award_id}, {num_per_state})")
-    print("Retrieving events")
     events = [call(tba.events, year=y) for y in range(1992, 2019)]
     events = helpers.flatten_lists(events)
     events = helpers.filter_official_events(events)
     events = list(filter(lambda e: e["country"] in ["USA", "Canada"], events))
     key_to_state = {e["key"]: e["state_prov"] for e in events}
-    print(f"Retrieving awards for {len(events)} events")
     event_awards = batch_call(
         events, tba.event_awards, lambda e: [], lambda e: {"event": e["key"]}
     )
     win_counts = defaultdict(lambda: defaultdict(lambda: 0))
-    print("done", flush=True)
     for awards_list in event_awards:
         for award in awards_list:
             if award["award_type"] == award_id:
@@ -38,7 +34,6 @@ def most_awards_per_state(award_id: int, num_per_state: int):
                         recipient["team_key"]
                     ] += 1
 
-    print("Processing leaderboard...")
     top5_per_state = {}
     for state, leaderboard in win_counts.items():
         leaderboard = sorted(leaderboard.items(), key=lambda t: -t[1])

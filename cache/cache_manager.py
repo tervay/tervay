@@ -7,6 +7,8 @@ import zlib
 import redis as redis_package
 import tbapy.models
 
+from app import logger
+
 redis = redis_package.from_url(os.environ.get("REDIS_URL"))
 
 minute = 60
@@ -75,7 +77,7 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
 
     # if theres a cache hit, return it
     if cached_result is not None:
-        print(f"Returning cache for {key} ({cached_result})")
+        logger.info(f"Returning cache for {key} ({cached_result})")
         return cached_result, True
 
     # if not, store it in the cache
@@ -115,7 +117,6 @@ def call(fn, refresh=False, pipe=None, *args, **kwargs):
 
 def batch_call(iterable, fn, get_args, get_kwargs):
     with redis.pipeline() as pipe:
-        print("Building first pipe call")
         keys = []
         for x in iterable:
             args = get_args(x)
@@ -126,11 +127,9 @@ def batch_call(iterable, fn, get_args, get_kwargs):
             key = f"{fn_str}({args_str}_{kwargs_str})"
             keys.append(key)
 
-        print("Retrieving based on first calls")
         for key in keys:
             retrieve(key, pipe=pipe)
 
-        print("Executing first pipe call")
         res1 = pipe.execute()
         results = {}
         for key, res in zip(keys, res1):
@@ -138,7 +137,6 @@ def batch_call(iterable, fn, get_args, get_kwargs):
                 res = postprocess(res)
             results[key] = res
 
-        print("Building second pipe call")
         for x in iterable:
             args = get_args(x)
             kwargs = get_kwargs(x)
@@ -149,7 +147,6 @@ def batch_call(iterable, fn, get_args, get_kwargs):
             if results[key] is None:
                 results[key] = call(fn, *args, **kwargs, pipe=pipe)
 
-        print("Executing second pipe call")
         pipe.execute()
 
         return list(results.values())
