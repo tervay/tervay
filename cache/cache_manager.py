@@ -7,7 +7,7 @@ import zlib
 import redis as redis_package
 import tbapy.models
 
-redis = redis_package.from_url(os.environ.get('REDIS_URL'))
+redis = redis_package.from_url(os.environ.get("REDIS_URL"))
 
 minute = 60
 hour = minute * 60
@@ -48,16 +48,15 @@ def retrieve(key, pipe=None):
 
 # https://github.com/django/django/blob/master/django/utils/text.py#L219
 def get_valid_filename(s):
-    s = str(s).strip().replace(' ', '_')
-    s = str(s).lstrip('/').replace('/', '_')
-    return re.sub(r'(?u)[^-\w.]', '', s)
+    s = str(s).strip().replace(" ", "_")
+    s = str(s).lstrip("/").replace("/", "_")
+    return re.sub(r"(?u)[^-\w.]", "", s)
 
 
 def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
     # Check that we aren't doing this recursively...
     parent_parent_frame = inspect.getouterframes(frame)[1][0]
-    _, _, parent_parent_fn_name, _, _ = inspect.getframeinfo(
-        parent_parent_frame)
+    _, _, parent_parent_fn_name, _, _ = inspect.getframeinfo(parent_parent_frame)
     if parent_parent_fn_name == cache_frame.__name__:
         return None, None
 
@@ -70,13 +69,13 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
     filename_str = get_valid_filename(filename)
     fn_name_str = get_valid_filename(fn_name)
     vals_str = get_valid_filename(str(vals))
-    key = f'{filename_str}::{fn_name_str}({vals_str})'
+    key = f"{filename_str}::{fn_name_str}({vals_str})"
     # cached_result = redis.get(key)
     cached_result = retrieve(key)
 
     # if theres a cache hit, return it
     if cached_result is not None:
-        print(f'Returning cache for {key} ({cached_result})')
+        print(f"Returning cache for {key} ({cached_result})")
         return cached_result, True
 
     # if not, store it in the cache
@@ -90,14 +89,14 @@ def purge_frame_cache(fn, *args, **kwargs):
     fn_name = get_valid_filename(fn.__name__)
     filename_str = get_valid_filename(inspect.getsourcefile(fn))
     vals_str = get_valid_filename(str(kwargs))
-    redis.delete(f'{filename_str}::{fn_name}({vals_str})')
+    redis.delete(f"{filename_str}::{fn_name}({vals_str})")
 
 
 def call(fn, refresh=False, pipe=None, *args, **kwargs):
     fn_str = get_valid_filename(fn.__name__)
     args_str = get_valid_filename(str(args))
     kwargs_str = get_valid_filename(str(kwargs))
-    key = f'{fn_str}({args_str}_{kwargs_str})'
+    key = f"{fn_str}({args_str}_{kwargs_str})"
     # cached_result = redis.get(key)
     cached_result = retrieve(key, pipe=pipe)
     if cached_result is not None and not refresh:
@@ -116,7 +115,7 @@ def call(fn, refresh=False, pipe=None, *args, **kwargs):
 
 def batch_call(iterable, fn, get_args, get_kwargs):
     with redis.pipeline() as pipe:
-        print('Building first pipe call')
+        print("Building first pipe call")
         keys = []
         for x in iterable:
             args = get_args(x)
@@ -124,14 +123,14 @@ def batch_call(iterable, fn, get_args, get_kwargs):
             fn_str = get_valid_filename(fn.__name__)
             args_str = get_valid_filename(str(args))
             kwargs_str = get_valid_filename(str(kwargs))
-            key = f'{fn_str}({args_str}_{kwargs_str})'
+            key = f"{fn_str}({args_str}_{kwargs_str})"
             keys.append(key)
 
-        print('Retrieving based on first calls')
+        print("Retrieving based on first calls")
         for key in keys:
             retrieve(key, pipe=pipe)
 
-        print('Executing first pipe call')
+        print("Executing first pipe call")
         res1 = pipe.execute()
         results = {}
         for key, res in zip(keys, res1):
@@ -139,18 +138,18 @@ def batch_call(iterable, fn, get_args, get_kwargs):
                 res = postprocess(res)
             results[key] = res
 
-        print('Building second pipe call')
+        print("Building second pipe call")
         for x in iterable:
             args = get_args(x)
             kwargs = get_kwargs(x)
             fn_str = get_valid_filename(fn.__name__)
             args_str = get_valid_filename(str(args))
             kwargs_str = get_valid_filename(str(kwargs))
-            key = f'{fn_str}({args_str}_{kwargs_str})'
+            key = f"{fn_str}({args_str}_{kwargs_str})"
             if results[key] is None:
                 results[key] = call(fn, *args, **kwargs, pipe=pipe)
 
-        print('Executing second pipe call')
+        print("Executing second pipe call")
         pipe.execute()
 
         return list(results.values())

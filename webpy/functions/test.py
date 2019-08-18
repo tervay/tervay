@@ -6,7 +6,7 @@ from webpy.manager import expose
 from app import tba
 
 
-@expose(name='Add two numbers', url='add')
+@expose(name="Add two numbers", url="add")
 def add(a: int, b: int):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
@@ -15,7 +15,7 @@ def add(a: int, b: int):
     return a + b
 
 
-@expose('Get Team Info', url='team_info')
+@expose("Get Team Info", url="team_info")
 def team_info(team_number: int):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:

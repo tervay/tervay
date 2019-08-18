@@ -10,20 +10,19 @@ from tbapy import TBA
 from models.database import db
 from models.forms import HotlinkView
 
-tba = TBA(os.environ.get('TBA_KEY'))
-app = Flask(__name__, template_folder='templates')
-app.config['SECRET_KEY'] = os.environ.get('CSRF_KEY') or 'testing-string'
+tba = TBA(os.environ.get("TBA_KEY"))
+app = Flask(__name__, template_folder="templates")
+app.config["SECRET_KEY"] = os.environ.get("CSRF_KEY") or "testing-string"
 
 # Auto https
 SSLify(app, subdomains=True)
 
 # Add /admin url
 admin = Admin(app)
-admin.add_view(HotlinkView(db['hotlinks']))
+admin.add_view(HotlinkView(db["hotlinks"]))
 
 # Sentry
-sentry_sdk.init(dsn=os.environ.get('SENTRY_DSN'),
-                integrations=[FlaskIntegration()])
+sentry_sdk.init(dsn=os.environ.get("SENTRY_DSN"), integrations=[FlaskIntegration()])
 
 
 # Live template reloading
@@ -35,5 +34,6 @@ def clear_cache():
 # Bring URLs into scope
 # noinspection PyUnresolvedReferences
 import routing
+
 # noinspection PyUnresolvedReferences
 import webpy

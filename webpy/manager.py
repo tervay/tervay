@@ -14,11 +14,7 @@ from cache import purge_frame_cache
 
 all_items = []  # type: List[FunctionDescriptor]
 
-type_to_field = {
-    int:     IntegerField,
-    str:     StringField,
-    Decimal: DecimalField
-}
+type_to_field = {int: IntegerField, str: StringField, Decimal: DecimalField}
 
 
 class FunctionDescriptor:
@@ -30,15 +26,19 @@ class FunctionDescriptor:
         self.signature = signature
 
     def generate_flask_form(self):
-        form_cls = type(f'{self.fn.__name__}Form', (FlaskForm,), {
-            **{p.name: type_to_field.get(p.annotation, StringField)(
-                p.name, validators=[DataRequired()])
-                for p in self.signature.parameters.values()},
-            **{
-                'submit':  SubmitField('Submit'),
-                'refresh': BooleanField('Refresh')
-            }
-        })
+        form_cls = type(
+            f"{self.fn.__name__}Form",
+            (FlaskForm,),
+            {
+                **{
+                    p.name: type_to_field.get(p.annotation, StringField)(
+                        p.name, validators=[DataRequired()]
+                    )
+                    for p in self.signature.parameters.values()
+                },
+                **{"submit": SubmitField("Submit"), "refresh": BooleanField("Refresh")},
+            },
+        )
         return form_cls
 
     def create_flask_route_function(self):
@@ -51,24 +51,26 @@ class FunctionDescriptor:
             """
             form_class = self.generate_flask_form()
             form = form_class()
-            fields = [(a, getattr(form, a)) for a in self.get_arg_names()] + \
-                     [('submit', form.submit), ('refresh', form.refresh)]
+            fields = [(a, getattr(form, a)) for a in self.get_arg_names()] + [
+                ("submit", form.submit),
+                ("refresh", form.refresh),
+            ]
             context = {
-                'item':         self,
-                'form':         form,
-                'form_fields':  fields,
-                'form_vars':    vars(form),
-                'msgs':         get_flashed_messages(),
-                'api_endpoint': f'/share/{self.url}_json/'
+                "item": self,
+                "form": form,
+                "form_fields": fields,
+                "form_vars": vars(form),
+                "msgs": get_flashed_messages(),
+                "api_endpoint": f"/share/{self.url}_json/",
             }
             # noinspection PyArgumentList
-            return render_template('py_function.html.jinja2', **context)
+            return render_template("py_function.html.jinja2", **context)
 
         return temporary
 
     def create_flask_json_endpoint(self):
         def temporary():
-            if request.method == 'POST':
+            if request.method == "POST":
                 try:
                     fn_args = {}
                     request_data = json.loads(request.data)
@@ -77,22 +79,20 @@ class FunctionDescriptor:
                         casted = self.get_type_for_attr(arg_name)(value)
                         fn_args[arg_name] = casted
 
-                    if request_data['refresh']:
+                    if request_data["refresh"]:
                         purge_frame_cache(self.fn, **fn_args)
 
                     result, cache_hit = self.fn(**fn_args)
                     return jsonify(
                         {
-                            'result': json.dumps(result, indent=4,
-                                                 sort_keys=True),
-                            'cached': cache_hit
+                            "result": json.dumps(result, indent=4, sort_keys=True),
+                            "cached": cache_hit,
                         }
                     )
                 except Exception as e:
-                    return jsonify(
-                        {'error': f'{str(e)}: {traceback.format_exc()}'})
+                    return jsonify({"error": f"{str(e)}: {traceback.format_exc()}"})
 
-            return jsonify({'error': 'must be a POST request'})
+            return jsonify({"error": "must be a POST request"})
 
         return temporary
 

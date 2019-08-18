@@ -8,31 +8,26 @@ from yaml import Loader, load
 from cache import cache_frame
 from webpy.manager import expose
 
-yaml_path = os.path.join(os.path.dirname(__file__), 'champions.yaml')
+yaml_path = os.path.join(os.path.dirname(__file__), "champions.yaml")
 
 
 def parse_yaml():
-    data = load('\n'.join(open(yaml_path).readlines()), Loader=Loader)
-    return data['champions'], data['synergies']
+    data = load("\n".join(open(yaml_path).readlines()), Loader=Loader)
+    return data["champions"], data["synergies"]
 
 
 def get_synergies(champion_objs, synergy_objs):
     counts = defaultdict(lambda: 0)
     for champ, info in champion_objs.items():
-        for origin in info['origin'].split('/'):
+        for origin in info["origin"].split("/"):
             counts[origin] += 1
-        for class_ in info['class'].split('/'):
+        for class_ in info["class"].split("/"):
             counts[class_] += 1
 
     achieved = {}
     for synergy, cnt in counts.items():
-        synergy_obj = list(
-            filter(
-                lambda s: s['name'] == synergy,
-                synergy_objs
-            )
-        )[0]
-        iterable = [x for x in synergy_obj['thresholds'] if cnt >= x]
+        synergy_obj = list(filter(lambda s: s["name"] == synergy, synergy_objs))[0]
+        iterable = [x for x in synergy_obj["thresholds"] if cnt >= x]
         if len(iterable) > 0:
             met = min(iterable)
             achieved[synergy] = met
@@ -44,24 +39,20 @@ def score_synergies(synergies):
     return sum(synergies.values())
 
 
-@expose(name='TFT Comp Tool', url='tft-helper')
-def tft_helper(comma_separated_roster: str, comma_separated_exclude: str,
-               level: int):
+@expose(name="TFT Comp Tool", url="tft-helper")
+def tft_helper(comma_separated_roster: str, comma_separated_exclude: str, level: int):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
         return r, cache_hit
 
     champs, synergies = parse_yaml()
-    roster = {k: champs[k] for k in comma_separated_roster.split(',') if
-              len(k) > 0}
+    roster = {k: champs[k] for k in comma_separated_roster.split(",") if len(k) > 0}
     unused = {
         name: info
         for name, info in champs.items()
-        if name not in roster.keys() and
-           name not in comma_separated_exclude.split('/')
+        if name not in roster.keys() and name not in comma_separated_exclude.split("/")
     }
-    combos = combinations(list(unused.keys()),
-                          level - len(roster.keys()))
+    combos = combinations(list(unused.keys()), level - len(roster.keys()))
 
     top_score = 0
     top_roster = None
@@ -76,4 +67,4 @@ def tft_helper(comma_separated_roster: str, comma_separated_exclude: str,
             top_roster = new_roster
             top_synergies = strengths
 
-    return {'synergies': top_synergies, 'roster': top_roster}
+    return {"synergies": top_synergies, "roster": top_roster}
