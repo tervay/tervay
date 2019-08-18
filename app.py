@@ -1,3 +1,4 @@
+import logging
 import os
 
 import sentry_sdk
@@ -9,8 +10,6 @@ from tbapy import TBA
 
 from models.database import db
 from models.forms import HotlinkView
-
-import logging
 
 tba = TBA(os.environ.get("TBA_KEY"))
 app = Flask(__name__, template_folder="templates")
