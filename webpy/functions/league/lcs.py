@@ -20,7 +20,7 @@ all_data = {
             "HLE",
             "JAG",
         ],
-        "rewards": [90, 70, 40, 20, 0, 0, 0, 0, 0],
+        "rewards": [1000, 90, 70, 40, 20, 0, 0, 0, 0, 0],
         "gauntlet_teams": 4,
     },
     "LCS": {
@@ -48,7 +48,7 @@ all_data = {
             "FOX",
         ],
         "gauntlet_teams": 4,
-        "rewards": [100, 70, 40, 20, 20, 0, 0, 0, 0],
+        "rewards": [1000, 100, 70, 40, 20, 20, 0, 0, 0, 0],
     },
     "LEC": {
         "points": {
@@ -74,7 +74,41 @@ all_data = {
             " XL",
         ],
         "gauntlet_teams": 4,
-        "rewards": [90, 70, 40, 20, 20, 0, 0, 0, 0],
+        "rewards": [1000, 90, 70, 40, 20, 20, 0, 0, 0, 0],
+    },
+    "LPL": {
+        "points": {
+            "FPX": 50,
+            " IG": 90,
+            "TES": 30,
+            "JDG": 70,
+            "RNG": 10,
+            "BLG": 0,
+            "DMO": 10,
+            "SNG": 0,
+            "EDG": 0,
+            "LNG": 0,
+        },
+        "standings": [
+            "FPX",
+            "TES",
+            "RNG",
+            "BLG",
+            "EDG",
+            " IG",
+            "LNG",
+            "SNG",
+            " WE",
+            "JDG",
+            "DMO",
+            " V5",
+            " RW",
+            "LGD",
+            " VG",
+            "OMG",
+        ],
+        "gauntlet_teams": 3,
+        "rewards": [1000, 90, 70, 40, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0],
     },
 }
 
@@ -92,12 +126,15 @@ def worlds_foldy_sheet(region: str):
         perms = generate_lcs_perms()
     if region.upper() == "LEC":
         perms = generate_lec_perms()
+    if region.upper() == "LPL":
+        perms = generate_lpl_perms()
 
     return perms_to_foldy(region, perms)
 
 
 def perms_to_foldy(region, perms):
     headers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"]
+    counts = defaultdict(lambda: 0)
     lines = [
         ",".join(
             headers[: len(perms[0])]
@@ -115,13 +152,23 @@ def perms_to_foldy(region, perms):
             pts[k] = v
 
         for i, team in enumerate(perm):
-            pts[team] += all_data[region]["rewards"][i]
+            pts[team] = (
+                pts[team] + all_data[region]["rewards"][i],
+                all_data[region]["rewards"][i],
+            )
 
-        sorted_pts = sorted(pts.items(), key=lambda t: -t[1])
+        for team, pt_val in pts.items():
+            if type(pt_val) is int:
+                pts[team] = (pt_val, 0)
+
+        sorted_pts = sorted(pts.items(), key=lambda t: t[1], reverse=True)
         pts_winner = sorted_pts[0][0]
         if split_winner == pts_winner:
             pts_winner = sorted_pts[1][0]
         newline += f"{pts_winner},"
+
+        counts[split_winner] += 1
+        counts[pts_winner] += 1
 
         c = 0
         for team, _ in sorted_pts:
@@ -132,7 +179,13 @@ def perms_to_foldy(region, perms):
                 c += 1
         lines.append(newline)
 
-    return lines
+    return {
+        "foldy": lines,
+        "odds": sorted(
+            {k: round(v * 100 / len(perms), 2) for k, v in counts.items()}.items(),
+            key=lambda t: -t[1],
+        ),
+    }
 
 
 def generate_lck_perms():
@@ -213,6 +266,46 @@ def generate_lec_perms():
             loserA = a
 
         if combo.index(loserA) != 4:
+            valid = False
+
+        if valid:
+            valid_combos.append(combo)
+
+    return valid_combos
+
+
+def generate_lpl_perms():
+    data = all_data["LPL"]
+    standings = data["standings"]
+    combos = itertools.permutations(standings[:8], 8)
+    valid_combos = []
+    for combo in combos:
+        valid = True
+
+        for i in [0, 1]:
+            if combo.index(standings[i]) > 3:
+                valid = False
+
+        for i in [2, 3]:
+            if combo.index(standings[i]) > 5:
+                valid = False
+
+        a = standings[4]
+        b = standings[7]
+        c = standings[5]
+        d = standings[6]
+
+        if combo.index(a) in [6, 7] and combo.index(b) in [6, 7]:
+            valid = False
+        if combo.index(c) in [6, 7] and combo.index(d) in [6, 7]:
+            valid = False
+
+        if combo.index(a) not in [6, 7]:
+            loserA = b
+        else:
+            loserA = a
+
+        if combo.index(loserA) != 6:
             valid = False
 
         if valid:
