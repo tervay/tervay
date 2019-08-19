@@ -110,6 +110,12 @@ all_data = {
         "gauntlet_teams": 3,
         "rewards": [1000, 90, 70, 40, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0],
     },
+    "LMS": {
+        "points": {" JT": 30, "AHQ": 50, "MAD": 70, " FW": 90, "HKA": 10, "GRX": 10},
+        "standings": [" JT", "AHQ", "HKA", "MAD", "GRX", " FW", "ALF"],
+        "gauntlet_teams": 4,
+        "rewards": [1000, 90, 70, 40, 20, 20, 0, 0],
+    },
 }
 
 
@@ -128,6 +134,8 @@ def worlds_foldy_sheet(region: str):
         perms = generate_lec_perms()
     if region.upper() == "LPL":
         perms = generate_lpl_perms()
+    if region.upper() == "LMS":
+        perms = generate_lms_perms()
 
     return perms_to_foldy(region, perms)
 
@@ -307,6 +315,23 @@ def generate_lpl_perms():
 
         if combo.index(loserA) != 6:
             valid = False
+
+        if valid:
+            valid_combos.append(combo)
+
+    return valid_combos
+
+
+def generate_lms_perms():
+    data = all_data["LMS"]
+    standings = data["standings"]
+    combos = itertools.permutations(standings[:5], 5)
+    valid_combos = []
+    for combo in combos:
+        valid = True
+        for i in [0, 1, 2]:
+            if combo.index(standings[i]) > i + 1:
+                valid = False
 
         if valid:
             valid_combos.append(combo)
