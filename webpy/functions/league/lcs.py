@@ -22,6 +22,7 @@ all_data = {
         ],
         "rewards": [1000, 90, 70, 40, 20, 0, 0, 0, 0, 0],
         "gauntlet_teams": 4,
+        "locks": {" AF": 5},
     },
     "LCS": {
         "points": {
@@ -49,6 +50,7 @@ all_data = {
         ],
         "gauntlet_teams": 4,
         "rewards": [1000, 100, 70, 40, 20, 20, 0, 0, 0, 0],
+        "locks": {"TSM": 5, "OPT": 6},
     },
     "LEC": {
         "points": {
@@ -75,6 +77,7 @@ all_data = {
         ],
         "gauntlet_teams": 4,
         "rewards": [1000, 90, 70, 40, 20, 20, 0, 0, 0, 0],
+        "locks": {},
     },
     "LPL": {
         "points": {
@@ -109,12 +112,14 @@ all_data = {
         ],
         "gauntlet_teams": 3,
         "rewards": [1000, 90, 70, 40, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0],
+        "locks": {"SNG": 8, " IG": 7},
     },
     "LMS": {
         "points": {" JT": 30, "AHQ": 50, "MAD": 70, " FW": 90, "HKA": 10, "GRX": 10},
         "standings": [" JT", "AHQ", "HKA", "MAD", "GRX", " FW", "ALF"],
         "gauntlet_teams": 4,
         "rewards": [1000, 90, 70, 40, 20, 20, 0, 0],
+        "locks": {},
     },
 }
 
@@ -203,6 +208,9 @@ def generate_lck_perms():
     valid_combos = []
     for combo in combos:
         valid = True
+        for team, place in data["locks"].items():
+            if combo.index(team) != place - 1:
+                valid = False
         for i in [0, 1, 2]:
             if combo.index(standings[i]) > i + 1:
                 valid = False
@@ -220,6 +228,9 @@ def generate_lcs_perms():
     valid_combos = []
     for combo in combos:
         valid = True
+        for team, place in data["locks"].items():
+            if combo.index(team) != place - 1:
+                valid = False
         for i in [0, 1]:
             if combo.index(standings[i]) > 3:
                 valid = False
@@ -248,33 +259,36 @@ def generate_lec_perms():
     valid_combos = []
     for combo in combos:
         valid = True
+        for team, place in data["locks"].items():
+            if combo.index(team) != place - 1:
+                valid = False
 
         for i in [0, 1]:
-            if combo.index(standings[i]) > 3:
+            if combo.index(standings[i]) > 2:
                 valid = False
 
         first = standings[0]
         second = standings[1]
         if combo.index(first) in [2, 3] and combo.index(second) in [2, 3]:
             valid = False
-
-        a = standings[2]
-        b = standings[4]
-        c = standings[3]
-        d = standings[5]
-
-        if combo.index(a) in [4, 5] and combo.index(b) in [4, 5]:
-            valid = False
-        if combo.index(c) in [4, 5] and combo.index(d) in [4, 5]:
-            valid = False
-
-        if combo.index(a) not in [4, 5]:
-            loserA = b
-        else:
-            loserA = a
-
-        if combo.index(loserA) != 4:
-            valid = False
+        #
+        # a = standings[2]
+        # b = standings[4]
+        # c = standings[3]
+        # d = standings[5]
+        #
+        # if combo.index(a) in [4, 5] and combo.index(b) in [4, 5]:
+        #     valid = False
+        # if combo.index(c) in [4, 5] and combo.index(d) in [4, 5]:
+        #     valid = False
+        #
+        # if combo.index(a) not in [4, 5]:
+        #     loserA = b
+        # else:
+        #     loserA = a
+        #
+        # if combo.index(loserA) != 4:
+        #     valid = False
 
         if valid:
             valid_combos.append(combo)
@@ -289,6 +303,9 @@ def generate_lpl_perms():
     valid_combos = []
     for combo in combos:
         valid = True
+        for team, place in data["locks"].items():
+            if combo.index(team) != place - 1:
+                valid = False
 
         for i in [0, 1]:
             if combo.index(standings[i]) > 3:
@@ -307,14 +324,14 @@ def generate_lpl_perms():
             valid = False
         if combo.index(c) in [6, 7] and combo.index(d) in [6, 7]:
             valid = False
+        #
+        # if combo.index(a) not in [6, 7]:
+        #     loserA = b
+        # else:
+        #     loserA = a
 
-        if combo.index(a) not in [6, 7]:
-            loserA = b
-        else:
-            loserA = a
-
-        if combo.index(loserA) != 6:
-            valid = False
+        # if combo.index(loserA) != 6:
+        #     valid = False
 
         if valid:
             valid_combos.append(combo)
@@ -329,6 +346,9 @@ def generate_lms_perms():
     valid_combos = []
     for combo in combos:
         valid = True
+        for team, place in data["locks"].items():
+            if combo.index(team) != place - 1:
+                valid = False
         for i in [0, 1, 2]:
             if combo.index(standings[i]) > i + 1:
                 valid = False
