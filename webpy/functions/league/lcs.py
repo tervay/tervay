@@ -22,7 +22,7 @@ all_data = {
         ],
         "rewards": [1000, 90, 70, 40, 20, 0, 0, 0, 0, 0],
         "gauntlet_teams": 4,
-        "locks": {" AF": 5},
+        "locks": {" AF": 5, "SBG": 4},
     },
     "LCS": {
         "points": {
@@ -119,7 +119,7 @@ all_data = {
         "standings": [" JT", "AHQ", "HKA", "MAD", "GRX", " FW", "ALF"],
         "gauntlet_teams": 4,
         "rewards": [1000, 90, 70, 40, 20, 20, 0, 0],
-        "locks": {},
+        "locks": {"MAD": 4},
     },
 }
 
