@@ -14,16 +14,18 @@
 
     <div class="form-container">
         <ul class="menu">
-            <li class="divider" data-content="FUNCTIONS"></li>
-            {% for fd, args in data.items() %}
-                <li class="menu-item">
-                    <a href="{{ fd.url }}">{{ fd.name }}</a>
-                    <div class="menu-badge hide-md">
-                        {% for arg_name, arg_type in args %}
-                            <label class="label label-primary">{{ arg_name }}</label>
-                        {% endfor %}
-                    </div>
-                </li>
+            {% for group, fdargs in data.items() %}
+                <li class="divider" data-content="{{ group.to_label() }}">
+                {% for fd, args in fdargs.items() %}
+                    <li class="menu-item">
+                        <a href="{{ fd.url }}">{{ fd.name }}</a>
+                        <div class="menu-badge hide-md">
+                            {% for arg_name, arg_type in args %}
+                                <label class="label label-primary">{{ arg_name }}</label>
+                            {% endfor %}
+                        </div>
+                    </li>
+                {% endfor %}
             {% endfor %}
         </ul>
     </div>

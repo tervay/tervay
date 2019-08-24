@@ -3,7 +3,7 @@ import itertools
 from collections import defaultdict
 
 from cache import cache_frame
-from webpy.manager import expose, Type
+from webpy.manager import expose, Type, Group
 
 all_data = {
     "LCK": {
@@ -124,7 +124,11 @@ all_data = {
 }
 
 
-@expose(name="Foldy Sheet Generator", url="worlds-foldy-sheet")
+@expose(
+    name="Foldy Sheet Generator",
+    url="worlds-foldy-sheet",
+    group=Group.League_of_Legends,
+)
 def worlds_foldy_sheet(region: Type.string):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:

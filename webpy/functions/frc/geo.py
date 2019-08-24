@@ -4,12 +4,13 @@ from collections import defaultdict
 import helpers
 from app import tba
 from cache import batch_call, cache_frame, call
-from webpy.manager import expose, Type
+from webpy.manager import expose, Type, Group
 
 
 @expose(
     name="Which teams have the most of a specific award in a state?",
     url="team_awards_per_state",
+    group=Group.FRC,
 )
 def most_awards_per_state(award_id: Type.int, num_per_state: Type.int):
     # https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/award_type.py#L6

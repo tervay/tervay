@@ -18,6 +18,15 @@ all_items = []  # type: List[FunctionDescriptor]
 type_to_field = {int: IntegerField, str: TextAreaField, Decimal: DecimalField}
 
 
+class Group(Enum):
+    FRC = auto()
+    League_of_Legends = auto()
+    etc = auto()
+
+    def to_label(self):
+        return self.name.replace("_", " ").upper()
+
+
 class Type(Enum):
     int = auto()
     string = auto()
@@ -57,10 +66,11 @@ class Type(Enum):
 
 
 class FunctionDescriptor:
-    def __init__(self, name, url, fn):
+    def __init__(self, name, url, fn, group):
         self.name = name
         self.url = url
         self.fn = fn
+        self.group = group
         signature = inspect.signature(self.fn)
         self.signature = signature
 
@@ -163,10 +173,10 @@ class FunctionDescriptor:
         return self.signature.parameters[attr].annotation
 
 
-def expose(name, url):
+def expose(name, url, group):
     def wrap(fn):
         global all_items
-        all_items.append(FunctionDescriptor(name=name, url=url, fn=fn))
+        all_items.append(FunctionDescriptor(name=name, url=url, fn=fn, group=group))
         return fn
 
     return wrap
