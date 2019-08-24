@@ -67,7 +67,7 @@
                     return r.json();
                 }).then((d) => {
                     if (!d.hasOwnProperty('error')) {
-                        document.getElementById('result').innerText = `Result (cache hit: ${d['cached']}):\n${d['result']}`;
+                        document.getElementById('result').innerHTML = `Result (cache hit: ${d['cached']}):\n${d['result']}`;
                     } else {
                         document.getElementById('result').innerText = `Error: ${d["error"]}`;
                     }

@@ -1,5 +1,5 @@
 import inspect
-
+from tabulate import tabulate
 from app import tba
 from cache import cache_frame, call
 from webpy.manager import expose, Type
@@ -34,6 +34,36 @@ child_events = {e: k for k, v in master_events.items() for e in v}
 
 
 @expose(name="SLFF 2019 Scoring", url="score-slff")
+def score_event(event_key: Type.string):
+    r, cache_hit = cache_frame(inspect.currentframe())
+    if r is not None:
+        return r, cache_hit
+
+    data = []
+    for team in tba.event_teams(event=event_key):
+        ret = score_slff(team_number=team["team_number"], event_key=event_key)
+        if type(ret) is tuple:
+            ret, _ = ret
+
+        data.append(
+            [
+                team["team_number"],
+                ret["alliance"],
+                ret["award"],
+                ret["elim"],
+                ret["qual"],
+                ret["total"],
+            ]
+        )
+
+    data.sort(key=lambda r: -r[-1])
+
+    return tabulate(
+        data, headers=["Team", "Alliance", "Award", "Elim", "Qual", "Total"]
+    ).replace("\n", "<br>")
+
+
+@expose(name="SLFF 2019 Scoring (Single team)", url="score-slff-team")
 def score_slff(team_number: Type.int, event_key: Type.string):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
