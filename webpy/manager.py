@@ -2,11 +2,12 @@ import inspect
 import json
 import traceback
 from decimal import Decimal
+from enum import Enum, auto
 
 from flask import get_flashed_messages, jsonify, render_template, request
 from flask_wtf import FlaskForm
 from typing import List
-from wtforms import BooleanField, StringField, SubmitField
+from wtforms import BooleanField, StringField, SubmitField, TextAreaField
 from wtforms.fields.html5 import DecimalField, IntegerField
 from wtforms.validators import DataRequired
 
@@ -14,7 +15,39 @@ from cache import purge_frame_cache
 
 all_items = []  # type: List[FunctionDescriptor]
 
-type_to_field = {int: IntegerField, str: StringField, Decimal: DecimalField}
+type_to_field = {int: IntegerField, str: TextAreaField, Decimal: DecimalField}
+
+
+class Type(Enum):
+    int = auto()
+    string = auto()
+    float = auto()
+    text = auto()
+    json = auto()
+
+    @classmethod
+    def __type_to_field(cls):
+        return {
+            cls.int: IntegerField,
+            cls.string: StringField,
+            cls.float: DecimalField,
+            cls.text: TextAreaField,
+            cls.json: TextAreaField,
+        }
+
+    @classmethod
+    def type_to_castable(cls):
+        return {
+            cls.int: int,
+            cls.string: str,
+            cls.float: Decimal,
+            cls.text: str,
+            cls.json: str,
+        }
+
+    def get_field(self):
+        print(self, vars(self), type(self))
+        return self.__type_to_field()[self]
 
 
 class FunctionDescriptor:
@@ -31,7 +64,7 @@ class FunctionDescriptor:
             (FlaskForm,),
             {
                 **{
-                    p.name: type_to_field.get(p.annotation, StringField)(
+                    p.name: p.annotation.get_field()(
                         p.name, validators=[DataRequired()]
                     )
                     for p in self.signature.parameters.values()
@@ -106,7 +139,10 @@ class FunctionDescriptor:
         return fn_args
 
     def get_type_for_attr(self, attr: str):
-        return self.signature.parameters[attr].annotation
+        return Type.type_to_castable().get(
+            self.signature.parameters[attr].annotation,
+            self.signature.parameters[attr].annotation,
+        )
 
 
 def expose(name, url):
