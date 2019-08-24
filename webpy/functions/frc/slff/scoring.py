@@ -2,7 +2,7 @@ import inspect
 
 from app import tba
 from cache import cache_frame, call
-from webpy.manager import expose
+from webpy.manager import expose, Type
 
 chairmans = 0
 chairmans_finalist = 69
@@ -34,7 +34,7 @@ child_events = {e: k for k, v in master_events.items() for e in v}
 
 
 @expose(name="SLFF 2019 Scoring", url="score-slff")
-def score_slff(team_number: int, event_key: str):
+def score_slff(team_number: Type.int, event_key: Type.string):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
         return r, cache_hit

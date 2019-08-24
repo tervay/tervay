@@ -1,26 +1,30 @@
 {% extends 'homepage.html.jinja2' %}
+
+{% block style %}
+    <style>
+        .form-container {
+            min-width: 80%;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+{% endblock %}
 {% block content %}
 
-<div class="list-group">
-    {% for fd, args in data.items() %}
-    <a href="{{ fd.url }}" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ fd.name }}</h5>
-            <!--            <small class="text-muted">3 days ago</small>-->
-        </div>
-        <p class="mb-1">
-            {% for arg_name, arg_type in args %}
-            <span class="badge badge-primary">{{ arg_name }} <span
-                    class="badge badge-light">{{ arg_type }}</span></span>
+    <div class="form-container">
+        <ul class="menu">
+            <li class="divider" data-content="FUNCTIONS"></li>
+            {% for fd, args in data.items() %}
+                <li class="menu-item">
+                    <a href="{{ fd.url }}">{{ fd.name }}</a>
+                    <div class="menu-badge">
+                        {% for arg_name, arg_type in args %}
+                            <label class="label label-primary">{{ arg_name }}</label>
+                        {% endfor %}
+                    </div>
+                </li>
             {% endfor %}
-        </p>
-        <!--        <small class="text-muted">-->
-        <!--            {% for arg_name, arg_type in args %}-->
-        <!--            <span class="badge badge-primary">{{ arg_name }} <span class="badge badge-light"></span></span>-->
-        <!--            {% endfor %}-->
-        <!--        </small>-->
-    </a>
-    {% endfor %}
-</div>
-
+        </ul>
+    </div>
 {% endblock %}

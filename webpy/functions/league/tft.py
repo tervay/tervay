@@ -6,7 +6,7 @@ from itertools import combinations
 from yaml import Loader, load
 
 from cache import cache_frame
-from webpy.manager import expose
+from webpy.manager import expose, Type
 
 yaml_path = os.path.join(os.path.dirname(__file__), "champions.yaml")
 
@@ -40,7 +40,11 @@ def score_synergies(synergies):
 
 
 @expose(name="TFT Comp Tool", url="tft-helper")
-def tft_helper(comma_separated_roster: str, comma_separated_exclude: str, level: int):
+def tft_helper(
+    comma_separated_roster: Type.string,
+    comma_separated_exclude: Type.string,
+    level: Type.int,
+):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
         return r, cache_hit

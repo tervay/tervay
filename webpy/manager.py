@@ -45,8 +45,14 @@ class Type(Enum):
             cls.json: str,
         }
 
+    @classmethod
+    def type_to_form_field(cls):
+        return {
+            cls.int: "forms/int_field.html.jinja2",
+            cls.string: "forms/string_field.html.jinja2",
+        }
+
     def get_field(self):
-        print(self, vars(self), type(self))
         return self.__type_to_field()[self]
 
 
@@ -88,6 +94,7 @@ class FunctionDescriptor:
                 ("submit", form.submit),
                 ("refresh", form.refresh),
             ]
+
             context = {
                 "item": self,
                 "form": form,
@@ -95,7 +102,16 @@ class FunctionDescriptor:
                 "form_vars": vars(form),
                 "msgs": get_flashed_messages(),
                 "api_endpoint": f"/share/{self.url}_json/",
+                "fields": [
+                    render_template(
+                        Type.type_to_form_field()[self.get_enum_type_for_attr(a)],
+                        label=a,
+                        id=a,
+                    )
+                    for a in self.get_arg_names()
+                ],
             }
+
             # noinspection PyArgumentList
             return render_template("py_function.html.jinja2", **context)
 
@@ -109,12 +125,11 @@ class FunctionDescriptor:
                     request_data = json.loads(request.data)
                     for arg_name in self.get_arg_names():
                         value = request_data[arg_name]
-                        casted = self.get_type_for_attr(arg_name)(value)
+                        casted = self.get_casted_type_for_attr(arg_name)(value)
                         fn_args[arg_name] = casted
 
                     if request_data["refresh"]:
                         purge_frame_cache(self.fn, **fn_args)
-
                     result, cache_hit = self.fn(**fn_args)
                     return jsonify(
                         {
@@ -138,11 +153,14 @@ class FunctionDescriptor:
                 fn_args.append(arg_name)
         return fn_args
 
-    def get_type_for_attr(self, attr: str):
+    def get_casted_type_for_attr(self, attr: str):
         return Type.type_to_castable().get(
             self.signature.parameters[attr].annotation,
             self.signature.parameters[attr].annotation,
         )
+
+    def get_enum_type_for_attr(self, attr: str):
+        return self.signature.parameters[attr].annotation
 
 
 def expose(name, url):

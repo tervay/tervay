@@ -4,14 +4,14 @@ from collections import defaultdict
 import helpers
 from app import tba
 from cache import batch_call, cache_frame, call
-from webpy.manager import expose
+from webpy.manager import expose, Type
 
 
 @expose(
     name="Which teams have the most of a specific award in a state?",
     url="team_awards_per_state",
 )
-def most_awards_per_state(award_id: int, num_per_state: int):
+def most_awards_per_state(award_id: Type.int, num_per_state: Type.int):
     # https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/award_type.py#L6
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:

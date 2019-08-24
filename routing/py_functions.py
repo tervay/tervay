@@ -9,7 +9,8 @@ def list_all():
     d = {}
     for item in all_items:
         d[item] = [
-            (arg, item.get_type_for_attr(arg).__name__) for arg in item.get_arg_names()
+            (arg, item.get_casted_type_for_attr(arg).__name__)
+            for arg in item.get_arg_names()
         ]
 
     return render_template(

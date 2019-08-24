@@ -16,7 +16,7 @@ def add(a: Type.int, b: Type.int):
 
 
 @expose("Get Team Info", url="team_info")
-def team_info(team_number: int):
+def team_info(team_number: Type.int):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
         return r, cache_hit
