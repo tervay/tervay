@@ -1,11 +1,131 @@
 {% extends 'base.html.jinja2' %}
 
+{% block style %}
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Open Sans", sans-serif;
+        }
+
+        .read-blog {
+            position: absolute;
+            color: #FFF;
+            bottom: 20px;
+            right: 20px;
+            font-size: 1.2em;
+            font-weight: 200;
+        }
+
+        .read-blog a,
+        .read-blog a:visited {
+            color: #FFF
+        }
+
+        #viewport {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0
+        }
+
+        .page {
+            position: relative;
+            width: 100%;
+            height: 100%
+        }
+
+        .landing.page {
+            background-color: #4183D7
+        }
+
+        .landing.page .den {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            height: 300px;
+            margin-top: -150px
+        }
+
+        @media only screen and (min-width: 480px) and (max-width: 965px) {
+            .landing.page .den {
+                font-size: 0.5em;
+                height: 200px;
+                margin-top: -100px;
+            }
+        }
+
+        @media only screen and (min-width: 200px) and (max-width: 480px) {
+            .landing.page .den {
+                font-size: 0.3em;
+                height: 100px;
+                margin-top: -50px;
+            }
+        }
+
+        .landing.page .den .name {
+            color: #FFF;
+            font-size: 9em;
+            font-weight: 200;
+            text-align: center;
+            text-transform: uppercase;
+            line-height: 210px
+        }
+
+        @media only screen and (min-width: 480px) and (max-width: 965px) {
+            .landing.page .den .name {
+                line-height: 140px;
+            }
+        }
+
+        @media only screen and (min-width: 200px) and (max-width: 480px) {
+            .landing.page .den .name {
+                line-height: 70px;
+            }
+        }
+
+        .landing.page .den .contact {
+            color: #EFEFEF;
+            font-weight: 100;
+            font-size: 3em;
+            text-align: center;
+            letter-spacing: 0.12em;
+            line-height: 90px;
+            unicode-bidi: bidi-override;
+            direction: rtl;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -o-user-select: none;
+            user-select: none
+        }
+
+        @media only screen and (min-width: 480px) and (max-width: 965px) {
+            .landing.page .den .contact {
+                line-height: 60px;
+            }
+        }
+
+        @media only screen and (min-width: 200px) and (max-width: 480px) {
+            .landing.page .den .contact {
+                line-height: 30px;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <div class="jumbotron ">
-        <div class="container">
-            <h1 class="display-4">Justin Tervay</h1>
-            <p class="lead"><a href="https://github.com/tervay/tervay">Website Source</a></p>
-            <p class="lead"><a href="http://www.tervay.com/resume">Resume</a></p>
+
+    <div id="viewport">
+        <div class="landing page">
+            <div class="den">
+                <div class="name">Justin Tervay</div>
+                <div class="contact">moc.yavret@nitsuj</div>
+            </div>
+            <div class="read-blog">
+                <a href="/resume">Resume</a>
+            </div>
         </div>
     </div>
 {% endblock %}
