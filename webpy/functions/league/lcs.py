@@ -50,7 +50,7 @@ all_data = {
         ],
         "gauntlet_teams": 4,
         "rewards": [1000, 100, 70, 40, 20, 20, 0, 0, 0, 0],
-        "locks": {"TSM": 5, "OPT": 6},
+        "locks": {"TSM": 5, "OPT": 6, "CLG": 4, " CG": 3},
     },
     "LEC": {
         "points": {
@@ -77,7 +77,7 @@ all_data = {
         ],
         "gauntlet_teams": 4,
         "rewards": [1000, 90, 70, 40, 20, 20, 0, 0, 0, 0],
-        "locks": {},
+        "locks": {"SPY": 6, "VIT": 5},
     },
     "LPL": {
         "points": {
