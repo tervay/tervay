@@ -17,9 +17,26 @@
         body {
             font-family: "Open Sans", sans-serif;
         }
+
+        .navbar {
+            padding: 1%;
+        }
+
     </style>
 </head>
 <body>
+<header class="navbar bg-secondary">
+    <section class="navbar-section">
+        <a href="/share" class="btn btn-link">All Functions</a>
+    </section>
+    <section class="navbar-center">
+        <a href="/" class="navbar-brand mr-2"><b>Justin Tervay</b></a>
+    </section>
+    <section class="navbar-section">
+{#        <a href="#" class="btn btn-link">Twitter</a>#}
+        <a href="https://github.com/tervay" class="btn btn-link">GitHub</a>
+    </section>
+</header>
 <div class="container">
     {% block content %}
     {% endblock %}

@@ -18,7 +18,7 @@
             {% for fd, args in data.items() %}
                 <li class="menu-item">
                     <a href="{{ fd.url }}">{{ fd.name }}</a>
-                    <div class="menu-badge">
+                    <div class="menu-badge hide-md">
                         {% for arg_name, arg_type in args %}
                             <label class="label label-primary">{{ arg_name }}</label>
                         {% endfor %}
