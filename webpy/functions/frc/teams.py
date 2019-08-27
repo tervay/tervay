@@ -2,10 +2,15 @@ import inspect
 
 from app import tba
 from cache import cache_frame, call
-from webpy.manager import Group, Type, expose
+from webpy.manager import Group, Type, expose, RenderAs
 
 
-@expose(name="Team A vs Team B (H2H/Together)", url="frc-h2h", group=Group.FRC)
+@expose(
+    name="Team A vs Team B (H2H/Together)",
+    url="frc-h2h",
+    group=Group.FRC,
+    render_as=RenderAs.text,
+)
 def head_to_head(team_1: Type.int, team_2: Type.int):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:

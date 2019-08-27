@@ -6,7 +6,7 @@ from itertools import combinations
 from yaml import Loader, load
 
 from cache import cache_frame
-from webpy.manager import expose, Type, Group
+from webpy.manager import expose, Type, Group, RenderAs
 
 yaml_path = os.path.join(os.path.dirname(__file__), "champions.yaml")
 
@@ -39,7 +39,12 @@ def score_synergies(synergies):
     return sum(synergies.values())
 
 
-@expose(name="TFT Comp Tool", url="tft-helper", group=Group.League_of_Legends)
+@expose(
+    name="TFT Comp Tool",
+    url="tft-helper",
+    group=Group.League_of_Legends,
+    render_as=RenderAs.text,
+)
 def tft_helper(
     comma_separated_roster: Type.string,
     comma_separated_exclude: Type.string,

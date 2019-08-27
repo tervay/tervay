@@ -36,6 +36,11 @@ class Type(Enum):
     json = auto()
 
 
+class RenderAs(Enum):
+    text = auto()
+    table = auto()
+
+
 class Argument:
     def __init__(self, parameter: Parameter):
         self.parameter = parameter
@@ -84,6 +89,9 @@ class FunctionDescriptor:
                 return a
 
         return None
+
+    def get_render_template(self):
+        return {RenderAs.text: "renderers/text.html.jinja2"}[self.render_as]
 
     def generate_flask_form(self):
         form_cls = type(
@@ -146,12 +154,22 @@ class FunctionDescriptor:
                     if request_data["refresh"]:
                         purge_frame_cache(self.fn, **fn_args)
                     result, cache_hit = self.fn(**fn_args)
+                    # return jsonify(
+                    #     {
+                    #         "result": json.dumps(result, indent=4, sort_keys=True),
+                    #         "cached": cache_hit,
+                    #     }
+                    # )
+
                     return jsonify(
                         {
-                            "result": json.dumps(result, indent=4, sort_keys=True),
+                            "result": render_template(
+                                self.get_render_template(), result=result
+                            ),
                             "cached": cache_hit,
                         }
                     )
+
                 except Exception as e:
                     return jsonify({"error": f"{str(e)}: {traceback.format_exc()}"})
 
@@ -160,11 +178,13 @@ class FunctionDescriptor:
         return temporary
 
 
-def expose(name, url, group):
+def expose(name, url, group, render_as):
     def wrap(fn):
         global all_items
         all_items.append(
-            FunctionDescriptor(name=name, url=url, fn=fn, group=group, render_as=None)
+            FunctionDescriptor(
+                name=name, url=url, fn=fn, group=group, render_as=render_as
+            )
         )
         return fn
 

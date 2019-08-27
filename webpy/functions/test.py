@@ -1,12 +1,12 @@
 import inspect
 
 from cache import cache_frame, call
-from webpy.manager import expose, Type, Group
+from webpy.manager import expose, Type, Group, RenderAs
 
 from app import tba
 
 
-@expose(name="Add two numbers", url="add", group=Group.etc)
+@expose(name="Add two numbers", url="add", group=Group.etc, render_as=RenderAs.text)
 def add(a: Type.int, b: Type.int):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
@@ -15,7 +15,7 @@ def add(a: Type.int, b: Type.int):
     return a + b
 
 
-@expose("Get Team Info", url="team_info", group=Group.FRC)
+@expose("Get Team Info", url="team_info", group=Group.FRC, render_as=RenderAs.text)
 def team_info(team_number: Type.int):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:

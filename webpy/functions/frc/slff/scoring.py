@@ -2,7 +2,7 @@ import inspect
 from tabulate import tabulate
 from app import tba
 from cache import cache_frame, call
-from webpy.manager import expose, Type, Group
+from webpy.manager import expose, Type, Group, RenderAs
 
 chairmans = 0
 chairmans_finalist = 69
@@ -33,7 +33,9 @@ master_events = {
 child_events = {e: k for k, v in master_events.items() for e in v}
 
 
-@expose(name="SLFF 2019 Scoring", url="score-slff", group=Group.FRC)
+@expose(
+    name="SLFF 2019 Scoring", url="score-slff", group=Group.FRC, render_as=RenderAs.text
+)
 def score_event(event_key: Type.string):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
@@ -63,7 +65,12 @@ def score_event(event_key: Type.string):
     ).replace("\n", "<br>")
 
 
-@expose(name="SLFF 2019 Scoring (Single team)", url="score-slff-team", group=Group.FRC)
+@expose(
+    name="SLFF 2019 Scoring (Single team)",
+    url="score-slff-team",
+    group=Group.FRC,
+    render_as=RenderAs.text,
+)
 def score_slff(team_number: Type.int, event_key: Type.string):
     r, cache_hit = cache_frame(inspect.currentframe())
     if r is not None:
