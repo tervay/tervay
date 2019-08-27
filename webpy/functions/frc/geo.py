@@ -1,7 +1,7 @@
 import inspect
 from collections import defaultdict
 
-import helpers
+from util import helpers
 from app import tba
 from cache import batch_call, cache_frame, call
 from webpy.manager import expose, Type, Group

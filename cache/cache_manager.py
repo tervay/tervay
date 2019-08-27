@@ -145,6 +145,7 @@ def batch_call(iterable, fn, get_args, get_kwargs):
             kwargs_str = get_valid_filename(str(kwargs))
             key = f"{fn_str}({args_str}_{kwargs_str})"
             if results[key] is None:
+                logger.info(f"Calling {fn}({args}, {kwargs})")
                 results[key] = call(fn, *args, **kwargs, pipe=pipe)
 
         pipe.execute()
