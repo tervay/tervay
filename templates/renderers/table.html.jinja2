@@ -1,0 +1,24 @@
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        {% for header in result[0] %}
+            <th>{{ header }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in result[1:-1] %}
+        <tr class="">
+            {% for element in row %}
+                <td>{{ element }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+
+    <tr>
+        {% for chance in result[-1] %}
+            <th colspan="2">{{ chance }}</th>
+        {% endfor %}
+    </tr>
+    </tbody>
+</table>

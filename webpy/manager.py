@@ -91,7 +91,10 @@ class FunctionDescriptor:
         return None
 
     def get_render_template(self):
-        return {RenderAs.text: "renderers/text.html.jinja2"}[self.render_as]
+        return {
+            RenderAs.text: "renderers/text.html.jinja2",
+            RenderAs.table: "renderers/table.html.jinja2",
+        }[self.render_as]
 
     def generate_flask_form(self):
         form_cls = type(
@@ -154,13 +157,6 @@ class FunctionDescriptor:
                     if request_data["refresh"]:
                         purge_frame_cache(self.fn, **fn_args)
                     result, cache_hit = self.fn(**fn_args)
-                    # return jsonify(
-                    #     {
-                    #         "result": json.dumps(result, indent=4, sort_keys=True),
-                    #         "cached": cache_hit,
-                    #     }
-                    # )
-
                     return jsonify(
                         {
                             "result": render_template(

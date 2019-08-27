@@ -128,7 +128,7 @@ all_data = {
     name="Foldy Sheet Generator",
     url="worlds-foldy-sheet",
     group=Group.League_of_Legends,
-    render_as=RenderAs.text,
+    render_as=RenderAs.table,
 )
 def worlds_foldy_sheet(region: Type.string):
     r, cache_hit = cache_frame(inspect.currentframe())
@@ -197,13 +197,29 @@ def perms_to_foldy(region, perms):
                 c += 1
         lines.append(newline)
 
-    return {
-        "foldy": lines,
-        "odds": sorted(
+    table = []
+    for line in lines:
+        table.append(line.split(","))
+
+    odds = dict(
+        sorted(
             {k: round(v * 100 / len(perms), 2) for k, v in counts.items()}.items(),
             key=lambda t: -t[1],
-        ),
-    }
+        )
+    )
+
+    odds_row = [f"{k}: {v}%" for k, v in odds.items()]
+    print(odds_row)
+    table.append(odds_row)
+    return table
+
+    # return {
+    #     "foldy": lines,
+    #     "odds": sorted(
+    #         {k: round(v * 100 / len(perms), 2) for k, v in counts.items()}.items(),
+    #         key=lambda t: -t[1],
+    #     ),
+    # }
 
 
 def generate_lck_perms():
