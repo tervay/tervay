@@ -3,6 +3,7 @@ import json
 import traceback
 from decimal import Decimal
 from enum import Enum, auto
+from inspect import Parameter
 
 from flask import get_flashed_messages, jsonify, render_template, request
 from flask_wtf import FlaskForm
@@ -34,45 +35,55 @@ class Type(Enum):
     text = auto()
     json = auto()
 
-    @classmethod
-    def __type_to_field(cls):
-        return {
-            cls.int: IntegerField,
-            cls.string: StringField,
-            cls.float: DecimalField,
-            cls.text: TextAreaField,
-            cls.json: TextAreaField,
-        }
 
-    @classmethod
-    def type_to_castable(cls):
-        return {
-            cls.int: int,
-            cls.string: str,
-            cls.float: Decimal,
-            cls.text: str,
-            cls.json: str,
-        }
+class Argument:
+    def __init__(self, parameter: Parameter):
+        self.parameter = parameter
+        self.name = parameter.name
+        self.type = parameter.annotation
 
-    @classmethod
-    def type_to_form_field(cls):
+    def get_native_type(self):
         return {
-            cls.int: "forms/int_field.html.jinja2",
-            cls.string: "forms/string_field.html.jinja2",
-        }
+            Type.int: int,
+            Type.string: str,
+            Type.float: Decimal,
+            Type.text: str,
+            Type.json: str,
+        }[self.type]
 
-    def get_field(self):
-        return self.__type_to_field()[self]
+    def get_form_field(self):
+        return {
+            Type.int: IntegerField,
+            Type.string: StringField,
+            Type.float: DecimalField,
+            Type.text: TextAreaField,
+            Type.json: TextAreaField,
+        }[self.type]
+
+    def get_html_field(self):
+        return {
+            Type.int: "forms/int_field.html.jinja2",
+            Type.string: "forms/string_field.html.jinja2",
+        }[self.type]
 
 
 class FunctionDescriptor:
-    def __init__(self, name, url, fn, group):
+    def __init__(self, name, url, fn, group, render_as):
         self.name = name
         self.url = url
         self.fn = fn
         self.group = group
-        signature = inspect.signature(self.fn)
-        self.signature = signature
+        self.arguments = [
+            Argument(p) for p in inspect.signature(self.fn).parameters.values()
+        ]
+        self.render_as = render_as
+
+    def get_argument(self, name: str) -> Argument:
+        for a in self.arguments:
+            if a.name == name:
+                return a
+
+        return None
 
     def generate_flask_form(self):
         form_cls = type(
@@ -80,10 +91,8 @@ class FunctionDescriptor:
             (FlaskForm,),
             {
                 **{
-                    p.name: p.annotation.get_field()(
-                        p.name, validators=[DataRequired()]
-                    )
-                    for p in self.signature.parameters.values()
+                    a.name: a.get_form_field()(a.name, validators=[DataRequired()])
+                    for a in self.arguments
                 },
                 **{"submit": SubmitField("Submit"), "refresh": BooleanField("Refresh")},
             },
@@ -100,7 +109,7 @@ class FunctionDescriptor:
             """
             form_class = self.generate_flask_form()
             form = form_class()
-            fields = [(a, getattr(form, a)) for a in self.get_arg_names()] + [
+            fields = [(a.name, getattr(form, a.name)) for a in self.arguments] + [
                 ("submit", form.submit),
                 ("refresh", form.refresh),
             ]
@@ -113,12 +122,8 @@ class FunctionDescriptor:
                 "msgs": get_flashed_messages(),
                 "api_endpoint": f"/share/{self.url}_json/",
                 "fields": [
-                    render_template(
-                        Type.type_to_form_field()[self.get_enum_type_for_attr(a)],
-                        label=a,
-                        id=a,
-                    )
-                    for a in self.get_arg_names()
+                    render_template(a.get_html_field(), label=a.name, id=a.name)
+                    for a in self.arguments
                 ],
             }
 
@@ -133,10 +138,10 @@ class FunctionDescriptor:
                 try:
                     fn_args = {}
                     request_data = json.loads(request.data)
-                    for arg_name in self.get_arg_names():
-                        value = request_data[arg_name]
-                        casted = self.get_casted_type_for_attr(arg_name)(value)
-                        fn_args[arg_name] = casted
+                    for arg in self.arguments:
+                        val = request_data[arg.name]
+                        casted = arg.get_native_type()(val)
+                        fn_args[arg.name] = casted
 
                     if request_data["refresh"]:
                         purge_frame_cache(self.fn, **fn_args)
@@ -154,29 +159,13 @@ class FunctionDescriptor:
 
         return temporary
 
-    def get_arg_names(self):
-        form_class = self.generate_flask_form()
-        form = form_class()
-        fn_args = []
-        for arg_name, form_field in vars(form).items():
-            if arg_name in [p.name for p in self.signature.parameters.values()]:
-                fn_args.append(arg_name)
-        return fn_args
-
-    def get_casted_type_for_attr(self, attr: str):
-        return Type.type_to_castable().get(
-            self.signature.parameters[attr].annotation,
-            self.signature.parameters[attr].annotation,
-        )
-
-    def get_enum_type_for_attr(self, attr: str):
-        return self.signature.parameters[attr].annotation
-
 
 def expose(name, url, group):
     def wrap(fn):
         global all_items
-        all_items.append(FunctionDescriptor(name=name, url=url, fn=fn, group=group))
+        all_items.append(
+            FunctionDescriptor(name=name, url=url, fn=fn, group=group, render_as=None)
+        )
         return fn
 
     return wrap
