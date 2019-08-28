@@ -29,7 +29,7 @@ sentry_sdk.init(dsn=os.environ.get("SENTRY_DSN"), integrations=[FlaskIntegration
 logFormatter = "%(asctime)s [%(levelname)s] %(message)s"
 logging.basicConfig(format=logFormatter)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 # Live template reloading

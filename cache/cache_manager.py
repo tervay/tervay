@@ -77,7 +77,7 @@ def cache_frame(frame, duration=DEFAULT_CACHE_TIME):
 
     # if theres a cache hit, return it
     if cached_result is not None:
-        logger.info(f"Returning cache for {key} ({cached_result})")
+        logger.debug(f"Returning cache for {key} ({cached_result})")
         return cached_result, True
 
     # if not, store it in the cache
@@ -145,7 +145,7 @@ def batch_call(iterable, fn, get_args, get_kwargs):
             kwargs_str = get_valid_filename(str(kwargs))
             key = f"{fn_str}({args_str}_{kwargs_str})"
             if results[key] is None:
-                logger.info(f"Calling {fn}({args}, {kwargs})")
+                logger.debug(f"Calling {fn}({args}, {kwargs})")
                 results[key] = call(fn, *args, **kwargs, pipe=pipe)
 
         pipe.execute()

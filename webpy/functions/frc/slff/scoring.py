@@ -34,7 +34,10 @@ child_events = {e: k for k, v in master_events.items() for e in v}
 
 
 @expose(
-    name="SLFF 2019 Scoring", url="score-slff", group=Group.FRC, render_as=RenderAs.text
+    name="SLFF 2019 Scoring",
+    url="score-slff",
+    group=Group.FRC,
+    render_as=RenderAs.table,
 )
 def score_event(event_key: Type.string):
     r, cache_hit = cache_frame(inspect.currentframe())
@@ -59,10 +62,8 @@ def score_event(event_key: Type.string):
         )
 
     data.sort(key=lambda r: -r[-1])
-
-    return tabulate(
-        data, headers=["Team", "Alliance", "Award", "Elim", "Qual", "Total"]
-    ).replace("\n", "<br>")
+    data = [["Team", "Alliance", "Award", "Elim", "Qual", "Total"]] + data
+    return data
 
 
 @expose(

@@ -209,17 +209,8 @@ def perms_to_foldy(region, perms):
     )
 
     odds_row = [f"{k}: {v}%" for k, v in odds.items()]
-    print(odds_row)
-    table.append(odds_row)
+    # table.append(odds_row)
     return table
-
-    # return {
-    #     "foldy": lines,
-    #     "odds": sorted(
-    #         {k: round(v * 100 / len(perms), 2) for k, v in counts.items()}.items(),
-    #         key=lambda t: -t[1],
-    #     ),
-    # }
 
 
 def generate_lck_perms():

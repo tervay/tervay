@@ -76,5 +76,25 @@
                 return false;
             });
         };
+
+        function rafAsync() {
+            return new Promise(resolve => {
+                requestAnimationFrame(resolve); //faster than set time out
+            });
+        }
+
+        function checkElement(selector) {
+            if (document.getElementById(selector) === null) {
+                return rafAsync().then(() => checkElement(selector));
+            } else {
+                return Promise.resolve(document.getElementById(selector));
+            }
+        }
+
+        checkElement('table').then((el) => {
+            console.log(el);
+            new Tablesort(el);
+            console.log('done :)');
+        })
     </script>
 {% endblock %}
