@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>{% block title %}Justin Tervay{% endblock %}</title>
-    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    {#    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">#}
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
+
     {% block style %}
     {% endblock %}
     <style>
@@ -14,29 +16,18 @@
             margin-top: 5%;
         }
 
-        body {
+        * {
             font-family: "Open Sans", sans-serif;
         }
-
-        .navbar {
-            padding: 1%;
-        }
-
     </style>
 </head>
 <body>
-<header class="navbar bg-secondary">
-    <section class="navbar-section">
-        <a href="/share" class="btn btn-link">All Functions</a>
-    </section>
-    <section class="navbar-center">
-        <a href="/" class="navbar-brand mr-2"><b>Justin Tervay</b></a>
-    </section>
-    <section class="navbar-section">
-        {#        <a href="#" class="btn btn-link">Twitter</a>#}
-        <a href="https://github.com/tervay" class="btn btn-link">GitHub</a>
-    </section>
-</header>
+<nav class="pa3 pa4-ns">
+    <a class="link dim black b f6 f5-ns dib mr3" href="/" title="Justin Tervay">Justin Tervay</a>
+    <a class="link dim gray    f6 f5-ns dib mr3" href="/share/" title="All Functions">All Functions</a>
+    <a class="link dim gray    f6 f5-ns dib mr3" href="https://www.github.com/tervay/" title="Github">Github</a>
+</nav>
+
 <div class="container" id="container">
     {% block content %}
     {% endblock %}
