@@ -1,0 +1,11 @@
+{% extends 'homepage.html.jinja2' %}
+
+{% block content %}
+    <article class="center br3 hidden ba b--black-10 mv4" style="max-width: 65rem;">
+        <h1 class="f4 bg-near-white br3 br--top black-60 mv0 pv2 ph3">{{ name }}</h1>
+        <div class="pa3 bt b--black-10">
+            <pre class="f6 f5-ns lh-copy mv0"><code class="language-python">{{ source_code }}</code></pre>
+        </div>
+    </article>
+{% endblock %}
+

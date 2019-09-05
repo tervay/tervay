@@ -11,7 +11,7 @@ from typing import List
 from wtforms import BooleanField, StringField, SubmitField, TextAreaField
 from wtforms.fields.html5 import DecimalField, IntegerField
 from wtforms.validators import DataRequired
-
+from codegen import codegen
 from cache import purge_frame_cache
 
 all_items = []  # type: List[FunctionDescriptor]
@@ -170,6 +170,17 @@ class FunctionDescriptor:
                     return jsonify({"error": f"{str(e)}: {traceback.format_exc()}"})
 
             return jsonify({"error": "must be a POST request"})
+
+        return temporary
+
+    def create_source_endpoint(self):
+        def temporary():
+            context = {
+                "source_code": codegen.get_generated_code(self.fn),
+                "name": self.fn.__name__,
+            }
+
+            return render_template("py_function_source.html.jinja2", **context)
 
         return temporary
 

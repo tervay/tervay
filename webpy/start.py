@@ -17,3 +17,10 @@ for item in all_items:
     vars()[json_endpoint] = app.route(f"/share/{url}_json/", methods=["GET", "POST"])(
         vars()[json_endpoint]
     )
+
+    source_endpoint = f"{route_name}_source"
+    vars()[source_endpoint] = item.create_source_endpoint()
+    vars()[source_endpoint].__name__ = source_endpoint
+    vars()[source_endpoint] = app.route(
+        f"/share/{url}/source/", methods=["GET", "POST"]
+    )(vars()[source_endpoint])

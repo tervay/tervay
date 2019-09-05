@@ -8,16 +8,21 @@
     {#    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">#}
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css">
 
     {% block style %}
     {% endblock %}
     <style>
         .container {
             margin-top: 5%;
+            font-family: "Open Sans", sans-serif;
         }
 
         * {
-            font-family: "Open Sans", sans-serif;
+        }
+
+        pre {
+            font-family: "Courier New", Courier, monospace;
         }
     </style>
 </head>
@@ -45,6 +50,8 @@
         crossorigin="anonymous"></script>
 <script src="https://rawcdn.githack.com/tristen/tablesort/3f9153b3e5f6d87ec8f9d83bb0c986d705661402/dist/tablesort.min.js"></script>
 <script src="https://rawcdn.githack.com/tristen/tablesort/3f9153b3e5f6d87ec8f9d83bb0c986d705661402/src/sorts/tablesort.number.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
 {% block scripts %}
 {% endblock %}
 </body>
