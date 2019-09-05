@@ -4,15 +4,16 @@ import traceback
 from decimal import Decimal
 from enum import Enum, auto
 from inspect import Parameter
+from typing import List
 
 from flask import get_flashed_messages, jsonify, render_template, request
 from flask_wtf import FlaskForm
-from typing import List
 from wtforms import BooleanField, StringField, SubmitField, TextAreaField
 from wtforms.fields.html5 import DecimalField, IntegerField
 from wtforms.validators import DataRequired
-from codegen import codegen
+
 from cache import purge_frame_cache
+from codegen import codegen
 
 all_items = []  # type: List[FunctionDescriptor]
 

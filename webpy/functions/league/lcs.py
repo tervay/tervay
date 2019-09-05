@@ -3,7 +3,7 @@ import itertools
 from collections import defaultdict
 
 from cache import cache_frame
-from webpy.manager import expose, Type, Group, RenderAs
+from webpy.manager import Group, RenderAs, Type, expose
 
 all_data = {
     "LCK": {

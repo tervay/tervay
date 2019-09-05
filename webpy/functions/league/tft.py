@@ -6,7 +6,7 @@ from itertools import combinations
 from yaml import Loader, load
 
 from cache import cache_frame
-from webpy.manager import expose, Type, Group, RenderAs
+from webpy.manager import Group, RenderAs, Type, expose
 
 yaml_path = os.path.join(os.path.dirname(__file__), "champions.yaml")
 
