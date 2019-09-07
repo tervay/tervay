@@ -15,7 +15,7 @@ def get_generated_network_code(fn):
         f"    {arg_dict_str}\n"
         f"    encoded = json.dumps(args).encode('utf-8')\n"
         f"    headers = {{'content-type': 'application/json'}}\n"
-        f"    url = 'http://0.0.0.0:5000/share/{fn.url}_json/'\n"
+        f"    url = 'https://tervay.com/share/{fn.url}_json/'\n"
         f"    r = urllib.request.Request(url, data=encoded, headers=headers)\n"
         f"    result = json.loads(urllib.request.urlopen(r).read().decode('utf-8'))\n"
         f"    return result['result']"
