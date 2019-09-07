@@ -3,6 +3,7 @@ from webpy.manager import all_items
 
 for item in all_items:
     url = str(item.url).strip("/")
+    item.url = url
     # Ew
     route_name = f"route_for_{item.name}"
     vars()[route_name] = item.create_flask_route_function()

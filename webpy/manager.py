@@ -155,17 +155,20 @@ class FunctionDescriptor:
                         casted = arg.get_native_type()(val)
                         fn_args[arg.name] = casted
 
-                    if request_data["refresh"]:
+                    if "refresh" in request_data and request_data["refresh"]:
                         purge_frame_cache(self.fn, **fn_args)
                     result, cache_hit = self.fn(**fn_args)
-                    return jsonify(
-                        {
-                            "result": render_template(
-                                self.get_render_template(), result=result
-                            ),
-                            "cached": cache_hit,
-                        }
-                    )
+                    if "raw" not in request_data:
+                        return jsonify(
+                            {
+                                "result": render_template(
+                                    self.get_render_template(), result=result
+                                ),
+                                "cached": cache_hit,
+                            }
+                        )
+                    else:
+                        return jsonify({"result": result, "cached": cache_hit})
 
                 except Exception as e:
                     return jsonify({"error": f"{str(e)}: {traceback.format_exc()}"})
@@ -177,7 +180,7 @@ class FunctionDescriptor:
     def create_source_endpoint(self):
         def temporary():
             context = {
-                "source_code": codegen.get_generated_code(self.fn),
+                "source_code": codegen.get_generated_network_code(self),
                 "name": self.fn.__name__,
             }
 
