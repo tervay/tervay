@@ -83,7 +83,7 @@ def score_slff(team_number: Type.int, event_key: Type.string):
 
 
 def score_team_event(team_number, event_key, refresh=False, wk=7):
-    event_blob = call(tba.event, event=event_key)
+    event_blob = call(tba.event, event=event_key, refresh=refresh)
     team_key = f"frc{team_number}"
     if event_blob["week"] is not None:  # not champs
         award_pt_map = {
