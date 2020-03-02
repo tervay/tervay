@@ -77,7 +77,7 @@ def score_slff(team_number: Type.int, event_key: Type.string):
     if r is not None:
         return r, cache_hit
 
-    return score_team_event(team_number, event_key, refresh=False, wk=10)
+    return score_team_event(team_number, event_key, refresh=True, wk=10)
 
 
 def score_team_event(team_number, event_key, refresh=False, wk=7):
