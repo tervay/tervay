@@ -48,7 +48,7 @@ def score_event(event_key: Type.string):
 
     data = []
     for team in tba.event_teams(event=event_key):
-        ret = score_slff(team_number=team["team_number"], event_key=event_key)
+        ret = score_team_event(team_number=team["team_number"], event_key=event_key, refresh=True, wk=10)
         if type(ret) is tuple:
             ret, _ = ret
 
