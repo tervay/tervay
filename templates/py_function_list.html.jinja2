@@ -1,32 +1,17 @@
-{% extends 'homepage.html.jinja2' %}
+{% extends 'base.html.jinja2' %}
 
-{% block style %}
-    <style>
-        .form-container {
-            min-width: 80%;
-            max-width: 80%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
-{% endblock %}
 {% block content %}
-
-    <div class="form-container">
-        <ul class="menu">
+    <div class="pa3 pa5-ns">
+        <ul class="list pl0 measure center">
             {% for group, fdargs in data.items() %}
-                <li class="divider" data-content="{{ group.to_label() }}">
+                <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30 b">{{ group.to_label() }}</li>
                 {% for fd, args in fdargs.items() %}
-                    <li class="menu-item">
+                    <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">
                         <a href="{{ fd.url }}">{{ fd.name }}</a>
-                        <div class="menu-badge hide-md">
-                            {% for arg_name, arg_type in args %}
-                                <label class="label label-primary">{{ arg_name }}</label>
-                            {% endfor %}
-                        </div>
                     </li>
                 {% endfor %}
             {% endfor %}
         </ul>
     </div>
 {% endblock %}
+

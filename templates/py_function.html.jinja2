@@ -2,9 +2,6 @@
 {% block title %}{{ item.name }}{% endblock %}
 {% block style %}
     <style>
-        #result {
-            font-family: "Courier New", Courier, monospace;
-        }
 
         form {
             padding-top: 20px;
@@ -66,7 +63,7 @@
                     return r.json();
                 }).then((d) => {
                     if (!d.hasOwnProperty('error')) {
-                        document.getElementById('result').innerHTML = `Result (cache hit: ${d['cached']}):\n${d['result']}`;
+                        document.getElementById('result').innerHTML = `<p>Result (cache hit: ${d['cached']}):\n</p>${d['result']}`;
                     } else {
                         document.getElementById('result').innerText = `Error: ${d["error"]}`;
                     }

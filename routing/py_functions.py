@@ -1,8 +1,9 @@
+from collections import defaultdict
+
 from flask import render_template
 
 from app import app
 from webpy.manager import all_items
-from collections import defaultdict
 
 
 @app.route("/share/")

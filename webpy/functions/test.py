@@ -1,9 +1,8 @@
 import inspect
 
-from cache import cache_frame, call
-from webpy.manager import expose, Type, Group, RenderAs
-
 from app import tba
+from cache import cache_frame, call
+from webpy.manager import Group, RenderAs, Type, expose
 
 
 @expose(name="Add two numbers", url="add", group=Group.etc, render_as=RenderAs.text)

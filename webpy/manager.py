@@ -4,15 +4,16 @@ import traceback
 from decimal import Decimal
 from enum import Enum, auto
 from inspect import Parameter
+from typing import List
 
 from flask import get_flashed_messages, jsonify, render_template, request
 from flask_wtf import FlaskForm
-from typing import List
 from wtforms import BooleanField, StringField, SubmitField, TextAreaField
 from wtforms.fields.html5 import DecimalField, IntegerField
 from wtforms.validators import DataRequired
 
 from cache import purge_frame_cache
+from codegen import codegen
 
 all_items = []  # type: List[FunctionDescriptor]
 
@@ -154,22 +155,36 @@ class FunctionDescriptor:
                         casted = arg.get_native_type()(val)
                         fn_args[arg.name] = casted
 
-                    if request_data["refresh"]:
+                    if "refresh" in request_data and request_data["refresh"]:
                         purge_frame_cache(self.fn, **fn_args)
                     result, cache_hit = self.fn(**fn_args)
-                    return jsonify(
-                        {
-                            "result": render_template(
-                                self.get_render_template(), result=result
-                            ),
-                            "cached": cache_hit,
-                        }
-                    )
+                    if "raw" not in request_data:
+                        return jsonify(
+                            {
+                                "result": render_template(
+                                    self.get_render_template(), result=result
+                                ),
+                                "cached": cache_hit,
+                            }
+                        )
+                    else:
+                        return jsonify({"result": result, "cached": cache_hit})
 
                 except Exception as e:
                     return jsonify({"error": f"{str(e)}: {traceback.format_exc()}"})
 
             return jsonify({"error": "must be a POST request"})
+
+        return temporary
+
+    def create_source_endpoint(self):
+        def temporary():
+            context = {
+                "source_code": codegen.get_generated_network_code(self),
+                "name": self.fn.__name__,
+            }
+
+            return render_template("py_function_source.html.jinja2", **context)
 
         return temporary
 

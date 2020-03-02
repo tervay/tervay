@@ -2,7 +2,7 @@ import inspect
 
 from app import tba
 from cache import cache_frame, call
-from webpy.manager import Group, Type, expose, RenderAs
+from webpy.manager import Group, RenderAs, Type, expose
 
 
 @expose(

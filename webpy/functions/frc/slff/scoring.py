@@ -1,8 +1,10 @@
 import inspect
+
 from tabulate import tabulate
+
 from app import tba
 from cache import cache_frame, call
-from webpy.manager import expose, Type, Group, RenderAs
+from webpy.manager import Group, RenderAs, Type, expose
 
 chairmans = 0
 chairmans_finalist = 69
