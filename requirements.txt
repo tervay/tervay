@@ -29,6 +29,6 @@ toml==0.10.0
 tqdm==4.32.2
 typing==3.7.4
 uhashring==1.1
-urllib3==1.25.3
+urllib3==1.25.8
 Werkzeug==0.15.5
 WTForms==2.2.1
